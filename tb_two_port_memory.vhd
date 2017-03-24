@@ -7,11 +7,11 @@ use vunit_lib.log_types_pkg.all;
 use vunit_lib.log_special_types_pkg.all;
 use vunit_lib.log_pkg.all;
 
-entity tb_memory is
+entity tb_two_port_memory is
   generic (runner_cfg : string);
 end entity;
 
-architecture tb of tb_memory is
+architecture tb of tb_two_port_memory is
     signal clock : std_logic := '0';
     signal wenable : std_logic := '0';
     signal renable : std_logic := '0';
