@@ -20,14 +20,16 @@ begin
     write_read: process(clock)
         variable mem_v : mem_array;
     begin
-        if renable = '1' then
-            data_out <= mem_v(to_integer(unsigned(raddress)));
-        else
-            data_out <= (others => 'X');
-        end if;
+        if rising_edge(clock) then
+            if renable = '1' then
+                data_out <= mem_v(to_integer(unsigned(raddress)));
+            else
+                data_out <= (others => 'X');
+            end if;
 
-        if wenable = '1' then
-            mem_v(to_integer(unsigned(waddress))) := data_in;
-        end if;
+            if wenable = '1' then
+                mem_v(to_integer(unsigned(waddress))) := data_in;
+            end if;
+        end if; -- rising edge clock
     end process;
 end behavioral;
