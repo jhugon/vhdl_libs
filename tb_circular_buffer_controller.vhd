@@ -28,6 +28,34 @@ begin
                                     waddress => waddress, raddress => raddress
                                  );
   main : process
+    procedure reset_cbc is
+    begin
+        wenable <= '0';
+        renable <= '0';
+        reset <= '1';
+        wait for 50 ns; -- check reset
+        reset <= '0';
+    end procedure reset_cbc;
+    procedure write_once is
+    begin
+        renable <= '0';
+        wenable <= '1';
+        wait for 50 ns;
+        wenable <= '0';
+    end procedure write_once;
+    procedure read_once is
+    begin
+        wenable <= '0';
+        renable <= '1';
+        wait for 50 ns;
+        renable <= '0';
+    end procedure read_once;
+    procedure do_nothing_once is
+    begin
+        wenable <= '0';
+        renable <= '0';
+        reset <= '0';
+    end procedure do_nothing_once;
   begin
     logger_init(display_format => level);
     --logger_init(display_format => verbose);
@@ -39,62 +67,52 @@ begin
     while test_suite loop
 
       if run("fill_once") then
-        wenable <= '0';
-        renable <= '0';
-        reset <= '1';
-        wait for 50 ns; -- check reset
+        --wenable <= '0';
+        --renable <= '0';
+        --reset <= '1';
+        --wait for 50 ns; -- check reset
+        reset_cbc;
         check_equal(waddress,0,"waddress start 0'd");
         check_equal(raddress,0,"raddress start 0'd");
         check_equal(full,false,"full start 0'd");
         check_equal(empty,true,"is emtpy");
-        reset <= '0';
-        wait for 50 ns; -- check nothing changes
+        do_nothing_once;
         check_equal(waddress,0,"waddress start 0'd");
         check_equal(raddress,0,"raddress start 0'd");
         check_equal(full,false,"full start 0'd");
         check_equal(empty,true,"is emtpy");
-        wenable <= '1';
-        wait for 50 ns; -- now check fill once
-        wenable <= '0';
+        write_once;
         check_equal(raddress,0,"raddress start 0'd");
         check_equal(waddress,1,"waddress after one full clock");
         check_equal(full,false,"full start 0'd");
         check_equal(empty,false,"empty start 0'd");
-        wait for 50 ns; -- now check nothing changed
+        do_nothing_once;
         check_equal(raddress,0,"raddress start 0'd");
         check_equal(waddress,1,"waddress after one full clock");
         check_equal(full,false,"full start 0'd");
         check_equal(empty,false,"empty start 0'd");
       elsif run("fill_once_read_once") then
-        wenable <= '0';
-        renable <= '0';
-        reset <= '1';
-        wait for 50 ns; -- check reset
+        reset_cbc;
         check_equal(waddress,0,"waddress start 0'd");
         check_equal(raddress,0,"raddress start 0'd");
         check_equal(full,false,"full start 0'd");
         check_equal(empty,true,"is emtpy");
-        reset <= '0';
-        wait for 50 ns; -- check nothing changes
+        do_nothing_once;
         check_equal(waddress,0,"waddress start 0'd");
         check_equal(raddress,0,"raddress start 0'd");
         check_equal(full,false,"full start 0'd");
         check_equal(empty,true,"is emtpy");
-        wenable <= '1';
-        wait for 50 ns; -- now check fill once
-        wenable <= '0';
+        write_once;
         check_equal(raddress,0,"raddress start 0'd");
         check_equal(waddress,1,"waddress after one full clock");
         check_equal(full,false,"full start 0'd");
         check_equal(empty,false,"empty start 0'd");
-        renable <= '1';
-        wait for 50 ns; -- now check read once
+        read_once;
         check_equal(raddress,1,"raddress start 0'd");
         check_equal(waddress,1,"waddress after one full clock");
         check_equal(full,false,"full start 0'd");
         check_equal(empty,true,"empty start 0'd");
-        renable <= '0';
-        wait for 50 ns; -- now check nothing changes
+        do_nothing_once;
         check_equal(raddress,1,"raddress start 0'd");
         check_equal(waddress,1,"waddress after one full clock");
         check_equal(full,false,"full start 0'd");
