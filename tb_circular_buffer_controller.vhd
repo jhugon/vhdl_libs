@@ -117,6 +117,42 @@ begin
         check_equal(waddress,1,"waddress after one full clock");
         check_equal(full,false,"full start 0'd");
         check_equal(empty,true,"empty start 0'd");
+      elsif run("fill_many") then
+        reset_cbc;
+        for i in 1 to 4 loop
+          write_once;
+          check_equal(raddress,0,"raddress start 0'd");
+          check_equal(waddress,i,"waddress after one full clock");
+          check_equal(full,false,"full start 0'd");
+          check_equal(empty,false,"empty start 0'd");
+        end loop;
+        for i in 5 to 2**waddress'length-1 loop
+          write_once;
+          check_equal(raddress,0,"raddress start 0'd");
+          check_equal(waddress,i mod (2**waddress'length),"waddress after one full clock");
+          check_equal(full,false,"full start 0'd");
+          check_equal(empty,false,"empty start 0'd");
+        end loop;
+        for i in 0 to 10*2**waddress'length loop
+          write_once;
+          check_equal(raddress,i mod (2**waddress'length),"raddress start 0'd");
+          check_equal(waddress,i mod (2**waddress'length),"waddress after one full clock");
+          check_equal(full,true,"full start 0'd");
+          check_equal(empty,false,"empty start 0'd");
+        end loop;
+        -- now read until empty
+        for i in 1 to 2**waddress'length-1 loop
+          read_once;
+          check_equal(raddress,i,"raddress start 0'd");
+          check_equal(waddress,0,"waddress after one full clock");
+          check_equal(full,false,"full start 0'd");
+          check_equal(empty,false,"empty start 0'd");
+        end loop;
+        read_once;
+        check_equal(raddress,0,"raddress start 0'd");
+        check_equal(waddress,0,"waddress after one full clock");
+        check_equal(full,false,"full start 0'd");
+        check_equal(empty,true,"empty start 0'd");
       end if;
     end loop;
 
