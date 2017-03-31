@@ -29,7 +29,8 @@ begin
     begin
         if rising_edge(clock) then
             log("readout ctr register updating...");
-            log("state: " & to_string(state) & " state_next: " & to_string(state_next) );
+            log("state: " & to_string(state) & " state_next: " & to_string(state_next) & " reset: " & to_string(reset));
+            log("full: " & to_string(full) & " empty: " & to_string(empty) & " trigger: " & to_string(trigger));
             if reset then
                 state <= state_w;
             else -- not reset
