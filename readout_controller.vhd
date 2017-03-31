@@ -17,7 +17,7 @@ entity readout_controller is
         trigger : in std_logic;
         wenable : out std_logic; -- write enable
         renable : out std_logic; -- output enable
-        dead : out std_logic; -- dead time is happening, can't accept triggers
+        dead : out std_logic); -- dead time is happening, can't accept triggers
 end readout_controller;
 
 architecture behavioral of readout_controller is
@@ -29,7 +29,7 @@ begin
     begin
         if rising_edge(clock) then
             log("readout ctr register updating...");
-            log("state: " & to_string(state) & " state_next: " & to_string(state_next) )
+            log("state: " & to_string(state) & " state_next: " & to_string(state_next) );
             if reset then
                 state <= state_w;
             else -- not reset
@@ -46,19 +46,19 @@ begin
                 state_next <= state_r;
             else
                 state_next <= state_wf;
-            end if
+            end if;
           when state_w =>
             if full = '1' then
                 state_next <= state_wf;
             else
                 state_next <= state_w;
-            end if
+            end if;
           when state_r =>
             if empty = '1' then
                 state_next <= state_w;
             else
                 state_next <= state_r;
-            end if
+            end if;
         end case;
     end process;
     -- output
@@ -74,7 +74,7 @@ begin
                 wenable <= '1';
                 renable <= '0';
                 dead <= '0';
-            end if
+            end if;
           when state_w =>
             if full = '1' then
                 wenable <= '1';
@@ -84,7 +84,7 @@ begin
                 wenable <= '1';
                 renable <= '0';
                 dead <= '1';
-            end if
+            end if;
           when state_r =>
             if empty = '1' then
                 wenable <= '1';
@@ -94,7 +94,7 @@ begin
                 wenable <= '0';
                 renable <= '1';
                 dead <= '1';
-            end if
+            end if;
         end case;
     end process;
     --wenable <= '1' when (state = state_w or state = state_wf) else '0';
