@@ -9,8 +9,7 @@ use vunit_lib.log_special_types_pkg.all;
 use vunit_lib.log_pkg.all;
 
 entity fixed_timer is
-    generic(Ndata : integer; -- register size in bits
-            interval: integer); -- register interval
+    generic(interval: integer); -- N clock ticks between triggers
     port(
         clock : in std_logic;
         reset : in std_logic;
@@ -19,6 +18,7 @@ entity fixed_timer is
 end fixed_timer;
 
 architecture behavioral of fixed_timer is
+    constant Ndata : integer := integer(ceil(log2(real(interval))));
     signal reg : std_logic_vector(Ndata - 1 downto 0);
     signal reg_next : std_logic_vector(Ndata - 1 downto 0);
 begin
