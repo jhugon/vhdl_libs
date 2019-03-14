@@ -3,9 +3,6 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 library vunit_lib;
 context vunit_lib.vunit_context;
-use vunit_lib.log_types_pkg.all;
-use vunit_lib.log_special_types_pkg.all;
-use vunit_lib.log_pkg.all;
 
 entity tb_fixed_timer is
   generic (runner_cfg : string);
@@ -18,12 +15,12 @@ architecture tb of tb_fixed_timer is
     signal trigger : std_logic := '0';
     signal triggermax : std_logic := '0';
 begin
-  ft : entity work.fixed_timer generic map (Ndata => 8, interval => 4) 
+  ft : entity work.fixed_timer generic map (interval => 4) 
                                  port map (clock => clock, reset => reset,
                                     enable => enable,
                                     trigger => trigger
                                  );
-  ftmax : entity work.fixed_timer generic map (Ndata => 4, interval => 15) 
+  ftmax : entity work.fixed_timer generic map (interval => 15) 
                                  port map (clock => clock, reset => reset,
                                     enable => enable,
                                     trigger => triggermax

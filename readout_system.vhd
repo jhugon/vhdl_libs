@@ -4,9 +4,6 @@ use ieee.numeric_std.all;
 
 library vunit_lib;
 context vunit_lib.vunit_context;
-use vunit_lib.log_types_pkg.all;
-use vunit_lib.log_special_types_pkg.all;
-use vunit_lib.log_pkg.all;
 
 entity readout_system is
     generic(Ndata : integer; -- data word bit width
@@ -71,8 +68,7 @@ begin
     );
 
     fixed_timer_inst : entity work.fixed_timer
-    generic map (Ndata => 10,
-                 interval => 1000)
+    generic map (interval => 1000)
     port map( 
         clock => clock,
         reset => reset,

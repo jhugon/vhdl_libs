@@ -4,9 +4,6 @@ use ieee.numeric_std.all;
 
 library vunit_lib;
 context vunit_lib.vunit_context;
-use vunit_lib.log_types_pkg.all;
-use vunit_lib.log_special_types_pkg.all;
-use vunit_lib.log_pkg.all;
 
 entity two_port_memory is
     generic(Ndata : integer; -- data word bit width
