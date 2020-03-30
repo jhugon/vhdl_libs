@@ -1,0 +1,79 @@
+\documentclass{letter}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{mathpazo} % palatino like font for mathand text
+\usepackage{inconsolata} % fixed width font
+\usepackage{microtype}
+\usepackage{lastpage}
+\usepackage{xparse}
+\usepackage{bm}
+\usepackage[table]{xcolor}
+\usepackage{siunitx}
+\usepackage{isotope}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{tabulary}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{setspace}
+\usepackage{calc}
+\usepackage{quotes}
+\usepackage{tikz}
+%\usepackage{backgrounds}
+%\usepackage{fit}
+\usetikzlibrary{graphs}
+\usetikzlibrary{graphdrawing}
+\usegdlibrary{trees, layered}
+\usepackage[american]{circuitikz}
+\ctikzset{bipoles/length=1cm}
+\usepackage{pgfplots}
+\usepackage{wrapfig}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{listings}
+
+\begin{document}
+
+    \begin{tikzpicture}
+      \coordinate (A) at (0,0);
+      \coordinate (B) at (3,0);
+      \coordinate (C) at (3,-4.5);
+      % Points
+      \draw[fill] (A) circle[radius=0.04];
+      \draw[fill] (B) circle[radius=0.04];
+      \draw[fill] (C) circle[radius=0.04];
+      % Labels
+      \node[anchor=south] at (A) {\SI{-5}{\nano C}};
+      \node[anchor=south] at (B) {\SI{8}{\nano C}};
+      \node[anchor=west] at (C) {P};
+      % distances
+%      \draw[] ($(A)+(0.18,0)$) edge ["\SI{2}{\cm}",<->] ($(B)+(-0.18,0)$);
+%      \draw[] ($(B)+(0,-0.18)$) edge ["\SI{3}{\cm}",<->] ($(C)+(0,0.18)$);
+    \end{tikzpicture}
+
+        \begin{circuitikz}[american]
+            \draw (0,0) node[npn,scale=1.5](Q){};
+            \coordinate (vout) at (0,1);
+            %\draw (Q.E) to[R=\SI{5}{k\ohm}] ++(0,-1.5) to[short,-o] ++(0,-0.2) node[anchor=north]{\SI{-12}{\volt}};
+            \draw (Q.E) to[R=\SI{680}{\ohm}, -o] ++(0,-1.7) node[anchor=north]{\SI{-12}{\volt}};
+            \draw (Q.C) to[short, -*] (vout) to[R=\SI{18}{\kilo \ohm}, -o] ++(0,2) node[anchor=south]{$+$\SI{12}{\volt}};
+            \draw (vout) to[short, -o] ++(1,0) node[anchor=west]{$V_\mathrm{out}$};
+            \draw (Q.B) to[short, -o] ++(-1,0) node[anchor=east]{$V_\mathrm{in}$};
+        \end{circuitikz}
+
+\begin{tikzpicture}[inner sep=2pt]
+\draw [help lines] (0,0) grid (3.5,2);
+\graph [layered layout, level distance=1cm, level sep=0]
+{ 1 [x=1,y=2] -- 2 -- 3 -- 1 };
+\graph [layered layout, level distance=5mm, level sep=0]
+{ 1 [x=3,y=2] -- 2 -- 3 -- 1, 3 -- {4,5} -- 6 -- 3 };
+\end{tikzpicture}
+\end{document}
