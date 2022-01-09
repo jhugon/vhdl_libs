@@ -1,4 +1,4 @@
-SUBDIRS = edge_detector/
+SUBDIRS = edge_detector/ simple_timer/
 
 all: $(SUBDIRS)
 $(SUBDIRS):
