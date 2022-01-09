@@ -13,25 +13,27 @@ entity edge_detector_rising is
 end;
 
 architecture behavioral of edge_detector_rising is
+    component edge_detector is
+        port(
+            clock : in std_logic;
+            reset : in std_logic;
+            trig_on_rising : in std_logic;
+            trig_on_falling : in std_logic;
+            sig_in : in std_logic;
+            sig_out : out std_logic
+            );
+    end component;
     signal current_in : std_logic;
     signal last_in : std_logic;
     signal last_last_in : std_logic;
 begin
-    -- registers
-    process(clock)
-    begin
-        if rising_edge(clock) then
-            if reset = '1' then
-                last_in <= '0';
-                last_last_in <= '0';
-            else -- not reset
-                last_in <= current_in;
-                last_last_in <= last_in;
-            end if; -- reset / not
-        end if; -- rising edge clock
-    end process;
-    -- next state
-    current_in <= sig_in;
-    -- output
-    sig_out <= last_in and (not last_last_in);
+    rising_edge_detector : edge_detector
+    port map(
+        clock => clock,
+        reset => reset,
+        trig_on_rising => '1',
+        trig_on_falling => '0',
+        sig_in => sig_in,
+        sig_out => sig_out
+    );
 end behavioral;

@@ -5,6 +5,7 @@ SIM = ghdl
 TOPLEVEL_LANG = vhdl
 
 VHDL_SOURCES += $(PWD)/edge_detector_rising.vhd
+VHDL_SOURCES += $(PWD)/edge_detector.vhd
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
 TOPLEVEL = edge_detector_rising
