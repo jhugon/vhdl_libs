@@ -15,34 +15,34 @@ async def edge_detector_basic_test(dut):
     dut.reset.value = 1
     await FallingEdge(dut.clock)
     await FallingEdge(dut.clock)
+    assert dut.sig_out == 0, "sig_out wasn't reset to 0"
     dut.reset.value = 0
     ## Reset complete
-    log_everything(dut)
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 0, "edge was detected when in hasn't changed from 0"
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 0, "edge was detected when in hasn't changed from 0"
     dut.sig_in.value = 1
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 1, "edge wasn't detected"
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 0, "edge was already detected, sig_out didn't go back to 0"
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 0, "edge was already detected, sig_out didn't go back to 0"
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 0, "edge was already detected, sig_out didn't go back to 0"
     dut.sig_in.value = 0
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 0, "edge was already detected, sig_out didn't go back to 0"
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 0, "edge was already detected, sig_out didn't go back to 0"
     dut.sig_in.value = 1
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 1, "edge wasn't detected"
     dut.sig_in.value = 0
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 0, "edge was already detected, sig_out didn't go back to 0"
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 0, "edge was already detected, sig_out didn't go back to 0"
     await FallingEdge(dut.clock)
-    log_everything(dut)
+    assert dut.sig_out == 0, "edge was already detected, sig_out didn't go back to 0"
