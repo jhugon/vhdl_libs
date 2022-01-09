@@ -3,3 +3,7 @@ log.csv
 setup.sh
 .*.un~
 .*.swp
+sim_build/
+*.o
+results.xml
+__pycache__/
