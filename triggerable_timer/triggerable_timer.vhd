@@ -20,38 +20,52 @@ entity triggerable_timer is
         clock : in std_logic;
         reset : in std_logic;
         enable : in std_logic;
-        reset_on_trigger : in std_logic;
-        trigger_value : in std_logic_vector(Nbits - 1 downto 0);
+        max_value : in std_logic_vector(Nbits - 1 downto 0);
         count : out std_logic_vector(Nbits - 1 downto 0);
         trigger : out std_logic
     );
 end triggerable_timer;
 
 architecture behavioral of triggerable_timer is
-    component simple_timer is
+    component programmable_timer is
         generic(Nbits: integer := 10); -- N bits to use for counter
         port(
             clock : in std_logic;
             reset : in std_logic;
             enable : in std_logic;
+            max_value : in std_logic_vector(Nbits - 1 downto 0);
             count : out std_logic_vector(Nbits - 1 downto 0)
         );
     end component;
-    signal combined_reset: std_logic;
     signal trigger_internal: std_logic;
     signal count_internal: std_logic_vector(Nbits - 1 downto 0);
+    signal last_count: std_logic_vector(Nbits - 1 downto 0);
+    signal count_num: integer;
 begin
-    simple_timer_inst : simple_timer
+    simple_timer_inst : programmable_timer
         generic map (Nbits => Nbits)
         port map (
             clock => clock,
-            reset => combined_reset,
+            reset => reset,
             enable => enable,
+            max_value => max_value,
             count => count_internal
         );
+    -- registers
+    process(clock)
+    begin
+        if rising_edge(clock) then
+            if reset = '1' then
+                last_count <= (others => '0');
+            else
+                last_count <= count_internal;
+            end if;
+        end if;
+    end process;
+    -- bookkeeping
+    count_num <= to_integer(unsigned(count_internal));
     -- logic
-    trigger_internal <= '1' when count_internal = trigger_value else '0';
-    combined_reset <= reset or (trigger_internal and reset_on_trigger);
+    trigger_internal <= '1' when (count_num = 0) and (last_count = max_value) else '0';
     -- output
     count <= count_internal;
     trigger <= trigger_internal;

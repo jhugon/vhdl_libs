@@ -4,7 +4,7 @@
 SIM = ghdl
 TOPLEVEL_LANG = vhdl
 
-VHDL_SOURCES += $(PWD)/../simple_timer/simple_timer.vhd $(PWD)/triggerable_timer.vhd
+VHDL_SOURCES += $(PWD)/../simple_timer/simple_timer.vhd $(PWD)/../programmable_timer/programmable_timer.vhd $(PWD)/triggerable_timer.vhd
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
 TOPLEVEL = triggerable_timer
