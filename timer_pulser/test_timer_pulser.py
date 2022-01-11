@@ -11,7 +11,7 @@ NBITS = 10
 MAXCOUNT = (1 << NBITS)-1
 
 @cocotb.test()
-async def triggerable_timer_test(dut):
+async def timer_pulser_test(dut):
     reset = dut.reset
     count = dut.count
     trigger = dut.trigger
@@ -40,8 +40,8 @@ async def triggerable_timer_test(dut):
     log_everything(dut) 
     assert trigger.value == 0, "shouldn't trigger"
 
-@cocotb.test(fail=True)
-async def triggerable_timer_reset_test(dut):
+@cocotb.test()
+async def timer_pulser_reset_test(dut):
     """
     Shouldn't trigger on/after reset
     """

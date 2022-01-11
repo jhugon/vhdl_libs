@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity timer_rollover_pulser is
+entity timer_pulser is
     generic(Nbits: integer := 10); -- N bits to use for counter
     port(
         clock : in std_logic;
@@ -10,9 +10,9 @@ entity timer_rollover_pulser is
         count : in std_logic_vector(Nbits - 1 downto 0);
         trigger : out std_logic
     );
-end timer_rollover_pulser;
+end timer_pulser;
 
-architecture behavioral of timer_rollover_pulser is
+architecture behavioral of timer_pulser is
     signal count_reg: std_logic_vector(Nbits - 1 downto 0);
     signal last_count_reg: std_logic_vector(Nbits - 1 downto 0);
     signal count_num: integer;
