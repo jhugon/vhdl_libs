@@ -28,8 +28,7 @@ async def triggerable_timer_test(dut):
     reset.value = 0
     ## Reset complete
     enable.value = 1
-    #for i in range(2*MAXCOUNT + 100):
-    for i in range(100):
+    for i in range(2*MAXCOUNT + 100):
         assert count.value == (i % (max_value.value+1)), f"Unexpected count value when i = {i}"
         if ((i % (max_value.value+1)) == 0) and not i==0:
             assert trigger.value == 1, f"trigger should have fired when (i & MAXCOUNT) == trigger.value, i={i}, max_value: {int(max_value.value)}"
