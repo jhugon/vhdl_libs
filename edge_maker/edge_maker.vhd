@@ -15,32 +15,6 @@ entity edge_maker is
         );
 end;
 
--- architecture behavioral of edge_maker is
---     signal reg_last_in: std_logic;
---     signal reg_last_out: std_logic;
---     signal next_last_in: std_logic;
---     signal next_last_out: std_logic;
--- begin
---     -- registers
---     process(clock)
---     begin
---         if rising_edge(clock) then
---             if reset = '1' then
---                 reg_last_in <= '0';
---                 reg_last_out <= '0';
---             else -- not reset
---                 reg_last_in <= next_last_in;
---                 reg_last_out <= next_last_out;
---             end if; -- reset / not
---         end if; -- rising edge clock
---     end process;
---     -- next state
---     next_last_in <= sig_in;
---     next_last_out <= reg_last_out when sig_in = '0' else not reg_last_out;
---     -- output
---     sig_out <= next_last_out;
--- end behavioral;
-
 architecture behavioral of edge_maker is
     signal reg_last_out: std_logic;
     signal next_last_out: std_logic;
