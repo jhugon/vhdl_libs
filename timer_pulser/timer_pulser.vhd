@@ -21,9 +21,10 @@ end timer_pulser;
 architecture behavioral of timer_pulser is
     signal count_reg: std_logic_vector(Nbits - 1 downto 0);
     signal last_count_reg: std_logic_vector(Nbits - 1 downto 0);
+    signal count_reg_next: std_logic_vector(Nbits - 1 downto 0);
+    signal last_count_reg_next: std_logic_vector(Nbits - 1 downto 0);
     signal count_num: integer;
     signal count_reg_num: integer;
-    signal last_count_num: integer;
 begin
     -- registers
     process(clock)
@@ -33,15 +34,17 @@ begin
                 count_reg <= (others => '0');
                 last_count_reg <= (others => '0');
             else
-                count_reg <= count;
-                last_count_reg <= count_reg;
+                count_reg <= count_reg_next;
+                last_count_reg <= last_count_reg_next;
             end if;
         end if;
     end process;
     -- bookkeeping
     count_reg_num <= to_integer(unsigned(count_reg));
     count_num <= to_integer(unsigned(count));
-    -- logic
+    -- next state
+    count_reg_next <= count;
+    last_count_reg_next <= count_reg;
     -- output
     process(trigger_only_wraparound,count_num,count_reg,count_reg_num,last_count_reg)
     begin
@@ -51,7 +54,7 @@ begin
             else
                 trigger <= '0';
             end if;
-        else
+        else -- bypasses flip-flops, so should be just comb logic if trigger_only_wraparound is hardcoded to '0'
             if count_num = 0 then
                 trigger <= '1';
             else
