@@ -1,4 +1,4 @@
-SUBDIRS = edge_detector/ simple_timer/ programmable_timer/ triggerable_timer/
+SUBDIRS = edge_detector/ edge_maker/ programmable_timer/ simple_timer/ timer_pulser/
 
 all: $(SUBDIRS)
 $(SUBDIRS):
