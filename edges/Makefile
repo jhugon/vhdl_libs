@@ -1,4 +1,4 @@
-SUBDIRS = edges/ switches/ timers/
+SUBDIRS = edge_detector/ edge_maker/
 
 all: $(SUBDIRS)
 $(SUBDIRS):

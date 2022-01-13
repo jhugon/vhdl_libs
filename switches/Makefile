@@ -1,4 +1,4 @@
-SUBDIRS = edges/ switches/ timers/
+SUBDIRS = switch_debouncer/
 
 all: $(SUBDIRS)
 $(SUBDIRS):
