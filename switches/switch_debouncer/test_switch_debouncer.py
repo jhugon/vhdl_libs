@@ -97,10 +97,7 @@ async def switch_debouncer_test(dut):
     for i in range(20):
         await FallingEdge(clock)
         assert sig_out.value == 1
-    rep.log(True)
     for i in range(16):
         tick.value = 1 if i % 4 == 0 else 0
         await FallingEdge(clock)
-        print(i)
-        rep.log(True)
         assert sig_out.value == (1 if i < 4 else 0)
