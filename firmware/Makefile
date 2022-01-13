@@ -1,4 +1,4 @@
-SUBDIRS = edges/ switches/ timers/ reset_controler/ firmware/
+SUBDIRS = basys3_buttons_toggle_leds/
 
 all: $(SUBDIRS)
 $(SUBDIRS):
