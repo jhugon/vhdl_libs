@@ -1,4 +1,4 @@
-SUBDIRS = switch_debouncer/ double_flip_flop/
+SUBDIRS = switch_debouncer/ double_flip_flop/ switch_input/
 
 all: $(SUBDIRS)
 $(SUBDIRS):

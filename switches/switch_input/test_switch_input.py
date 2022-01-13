@@ -57,15 +57,19 @@ class Representation:
         
 
 @cocotb.test()
-async def double_flip_flop_test(dut):
-    rep = Representation(dut,["clock", "reset", "sig_in"],["sig_out"],"clock")
+async def switch_input_test(dut):
+    rep = Representation(dut,["clock", "reset", "reset_value", "tick","sig_in"],["sig_out"],"clock")
     clock = dut.clock
     reset = dut.reset
+    reset_value = dut.reset_value
+    tick = dut.tick
     sig_in = dut.sig_in
     sig_out = dut.sig_out
     cocotb.start_soon(Clock(clock, 10, units="ns").start())
     sig_in.value = 0
     reset.value = 1
+    reset_value.value = 0
+    tick.value = 0
     await FallingEdge(clock)
     await FallingEdge(clock)
     dut.reset.value = 0
@@ -76,17 +80,24 @@ async def double_flip_flop_test(dut):
         await FallingEdge(clock)
         assert sig_out.value == 0
     sig_in.value = 1
-    for i in range(16):
-        await FallingEdge(clock)
-        assert sig_out.value == (0 if i < 1 else 1)
-    sig_in.value = 0
-    for i in range(16):
-        await FallingEdge(clock)
-        assert sig_out.value == (1 if i < 1 else 0)
-    for i in range(20):
-        sig_in.value = 1
+    for i in range(10):
         await FallingEdge(clock)
         assert sig_out.value == 0
-        sig_in.value = 0
+    sig_in.value = 0
+    for i in range(16):
+        tick.value = 1 if i % 4 == 0 else 0
+        await FallingEdge(clock)
+        assert sig_out.value == 0
+    sig_in.value = 1
+    for i in range(16):
+        tick.value = 1 if i % 4 == 0 else 0
+        await FallingEdge(clock)
+        assert sig_out.value == (0 if i < 8 else 1)
+    sig_in.value = 0
+    for i in range(20):
         await FallingEdge(clock)
         assert sig_out.value == 1
+    for i in range(16):
+        tick.value = 1 if i % 4 == 0 else 0
+        await FallingEdge(clock)
+        assert sig_out.value == (1 if i < 4 else 0)
