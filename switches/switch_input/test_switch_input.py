@@ -58,13 +58,15 @@ class Representation:
 
 @cocotb.test()
 async def switch_input_test(dut):
-    rep = Representation(dut,["clock", "reset", "reset_value", "tick","sig_in"],["sig_out"],"clock")
+    rep = Representation(dut,["clock", "reset", "reset_value", "tick","sig_in"],["sig_out","falling_edge_pulse","rising_edge_pulse"],"clock")
     clock = dut.clock
     reset = dut.reset
     reset_value = dut.reset_value
     tick = dut.tick
     sig_in = dut.sig_in
     sig_out = dut.sig_out
+    rising_edge_pulse = dut.rising_edge_pulse
+    falling_edge_pulse = dut.falling_edge_pulse
     cocotb.start_soon(Clock(clock, 10, units="ns").start())
     sig_in.value = 0
     reset.value = 1
@@ -74,25 +76,35 @@ async def switch_input_test(dut):
     await FallingEdge(clock)
     dut.reset.value = 0
     assert sig_out.value == 0
+    assert rising_edge_pulse.value == 0
+    assert falling_edge_pulse.value == 0
     ## Reset complete
     sig_in.value = 0
     for i in range(10):
         await FallingEdge(clock)
         assert sig_out.value == 0
+        assert rising_edge_pulse.value == 0
+        assert falling_edge_pulse.value == 0
     sig_in.value = 1
     for i in range(10):
         await FallingEdge(clock)
         assert sig_out.value == 0
+        assert rising_edge_pulse.value == 0
+        assert falling_edge_pulse.value == 0
     sig_in.value = 0
     for i in range(16):
         tick.value = 1 if i % 4 == 0 else 0
         await FallingEdge(clock)
         assert sig_out.value == 0
+        assert rising_edge_pulse.value == 0
+        assert falling_edge_pulse.value == 0
     sig_in.value = 1
     for i in range(16):
         tick.value = 1 if i % 4 == 0 else 0
         await FallingEdge(clock)
         assert sig_out.value == (0 if i < 8 else 1)
+        assert rising_edge_pulse.value == (1 if i == 9 else 0)
+        assert falling_edge_pulse.value == 0
     sig_in.value = 0
     for i in range(20):
         await FallingEdge(clock)
@@ -101,3 +113,5 @@ async def switch_input_test(dut):
         tick.value = 1 if i % 4 == 0 else 0
         await FallingEdge(clock)
         assert sig_out.value == (1 if i < 4 else 0)
+        assert rising_edge_pulse.value == 0
+        assert falling_edge_pulse.value == (1 if i == 5 else 0)

@@ -4,7 +4,7 @@
 SIM = ghdl
 TOPLEVEL_LANG = vhdl
 
-VHDL_SOURCES += $(PWD)/../switch_debouncer/switch_debouncer.vhd $(PWD)/../double_flip_flop/double_flip_flop.vhd $(PWD)/switch_input.vhd
+VHDL_SOURCES += $(PWD)/../switch_debouncer/switch_debouncer.vhd $(PWD)/../double_flip_flop/double_flip_flop.vhd $(PWD)/../../edges/edge_detector/edge_detector.vhd $(PWD)/switch_input.vhd
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
 TOPLEVEL = switch_input
