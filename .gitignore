@@ -7,3 +7,4 @@ sim_build/
 *.o
 results.xml
 __pycache__/
+*.vcd
