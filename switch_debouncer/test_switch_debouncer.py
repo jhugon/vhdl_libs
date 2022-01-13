@@ -38,36 +38,69 @@ class Representation:
             return sig.value
 
     def __str__(self):
+        return self.get_str(show_internal=False)
+
+    def get_str(self,show_internal=False):
         result = ""
         result += self.clock_sig._name + ": {0}".format(self.format_sig(self.clock_sig))
         for sig in self.in_sigs:
             result += " " + sig._name + ": {0}".format(self.format_sig(sig))
-        for sig in self.internal_sigs:
-            result += " " + sig._name + ": {0}".format(self.format_sig(sig))
+        if show_internal:
+            for sig in self.internal_sigs:
+                result += " " + sig._name + ": {0}".format(self.format_sig(sig))
         for sig in self.out_sigs:
             result += " " + sig._name + ": {0}".format(self.format_sig(sig))
         return result
 
-    def log(self):
-        self.dut._log.info(f"At {get_sim_time('ns'):4.0f} ns {str(self)}")
+    def log(self,show_internal=False):
+        self.dut._log.info(f"At {get_sim_time('ns'):4.0f} ns {self.get_str(show_internal)}")
         
 
 @cocotb.test()
 async def switch_debouncer_test(dut):
-    rep = Representation(dut,["clock", "reset", "tick","sig_in"],["sig_out"],"clock")
+    rep = Representation(dut,["clock", "reset", "reset_value", "tick","sig_in"],["sig_out"],"clock")
     clock = dut.clock
     reset = dut.reset
+    reset_value = dut.reset_value
     tick = dut.tick
     sig_in = dut.sig_in
     sig_out = dut.sig_out
     cocotb.start_soon(Clock(clock, 10, units="ns").start())
     sig_in.value = 0
     reset.value = 1
+    reset_value.value = 0
     tick.value = 0
     await FallingEdge(clock)
     await FallingEdge(clock)
     dut.reset.value = 0
-    assert dut.sig_out == 0
+    assert sig_out.value == 0
     ## Reset complete
-    rep.log()
     sig_in.value = 0
+    for i in range(10):
+        await FallingEdge(clock)
+        assert sig_out.value == 0
+    sig_in.value = 1
+    for i in range(10):
+        await FallingEdge(clock)
+        assert sig_out.value == 0
+    sig_in.value = 0
+    for i in range(16):
+        tick.value = 1 if i % 4 == 0 else 0
+        await FallingEdge(clock)
+        assert sig_out.value == 0
+    sig_in.value = 1
+    for i in range(16):
+        tick.value = 1 if i % 4 == 0 else 0
+        await FallingEdge(clock)
+        assert sig_out.value == (0 if i < 4 else 1)
+    sig_in.value = 0
+    for i in range(20):
+        await FallingEdge(clock)
+        assert sig_out.value == 1
+    rep.log(True)
+    for i in range(16):
+        tick.value = 1 if i % 4 == 0 else 0
+        await FallingEdge(clock)
+        print(i)
+        rep.log(True)
+        assert sig_out.value == (1 if i < 4 else 0)
