@@ -68,10 +68,8 @@ async def button_toggler_test(dut):
     cocotb.start_soon(Clock(clock, 10, units="ns").start())
     for i in range(15):
         await FallingEdge(clock)
-        print(i,rep.get_str())
     assert led.value == 0
     ## Reset complete
     for i in range(200):
         await FallingEdge(clock)
-        print(i,i//TICKPERIOD,rep.get_str())
         assert led.value == (i//TICKPERIOD % LED_PORT_MOD)
