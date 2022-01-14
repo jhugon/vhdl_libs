@@ -3,7 +3,9 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.math_real.all;
 
+-- PULSEPRESCALE needs to be 10 for testing, but for 100 MHz => 100 Hz needs to be 1_000_000 in real life (see Makefile option)
 entity top is
+    generic (PULSEPRESCALE : integer := 1000000);
     port(
         clk : in std_logic;
         btnC : in std_logic;
@@ -57,12 +59,12 @@ btn_tglr : button_toggler
         sig_out => led0
     );
 timer_plsr : programmable_timer_pulser
-    generic map (Nbits => 17) 
+    generic map (Nbits => 20)
     port map (
         clock => clk,
         reset => reset,
         enable => '1',
-        max_value => std_logic_vector(to_unsigned(100000,17)), -- needs to be 10 for testing, but for 10 MHz => 100 Hz need 100_000
+        max_value => std_logic_vector(to_unsigned(PULSEPRESCALE,20)),
         trigger_only_wraparound => '0',
         trigger => tick
     );
