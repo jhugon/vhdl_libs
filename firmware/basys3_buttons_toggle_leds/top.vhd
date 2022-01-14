@@ -57,12 +57,12 @@ btn_tglr : button_toggler
         sig_out => led0
     );
 timer_plsr : programmable_timer_pulser
-    generic map (Nbits => 8)
+    generic map (Nbits => 17) 
     port map (
         clock => clk,
         reset => reset,
         enable => '1',
-        max_value => std_logic_vector(to_unsigned(255,8)),
+        max_value => std_logic_vector(to_unsigned(100000,17)), -- needs to be 10 for testing, but for 10 MHz => 100 Hz need 100_000
         trigger_only_wraparound => '0',
         trigger => tick
     );

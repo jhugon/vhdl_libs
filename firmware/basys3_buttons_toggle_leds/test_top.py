@@ -64,40 +64,24 @@ async def button_toggler_test(dut):
     sig_out = dut.led
     cocotb.start_soon(Clock(clock, 10, units="ns").start())
     sig_in.value = 0
-    for i in range(50):
+    for i in range(17):
         await FallingEdge(clock)
-#    dut.reset.value = 0
-#    assert sig_out.value == 0
-#    ## Reset complete
-#    sig_in.value = 0
-#    for i in range(10):
-#        await FallingEdge(clock)
-#        assert sig_out.value == 0
-#    sig_in.value = 1
-#    for i in range(10):
-#        await FallingEdge(clock)
-#        assert sig_out.value == 0
-#    sig_in.value = 0
-#    for i in range(16):
-#        tick.value = 1 if i % 4 == 0 else 0
-#        await FallingEdge(clock)
-#        assert sig_out.value == 0
-#    ### Trying to toggle now
-#    sig_in.value = 1
-#    for i in range(40):
-#        tick.value = 1 if i % 5 == 0 else 0
-#        await FallingEdge(clock)
-#        assert sig_out.value == (0 if i < 12 else 1)
-#    sig_in.value = 0
-#    for i in range(40):
-#        await FallingEdge(clock)
-#        assert sig_out.value == 1
-#    for i in range(10):
-#        tick.value = 1 if i % 4 == 0 else 0
-#        await FallingEdge(clock)
-#        assert sig_out.value == 1
-#    sig_in.value = 1
-#    for i in range(40):
-#        tick.value = 1 if i % 5 == 3 else 0
-#        await FallingEdge(clock)
-#        assert sig_out.value == (1 if i < 10 else 0)
+    dut.reset.value = 0
+    assert sig_out.value == 0
+    ## Reset complete
+    sig_in.value = 0
+    for i in range(30):
+        await FallingEdge(clock)
+        assert sig_out.value == 0
+    sig_in.value = 1
+    for i in range(30):
+        await FallingEdge(clock)
+        assert sig_out.value == (0 if i < 16 else 1)
+    sig_in.value = 0
+    for i in range(30):
+        await FallingEdge(clock)
+        assert sig_out.value == 1
+    sig_in.value = 1
+    for i in range(30):
+        await FallingEdge(clock)
+        assert sig_out.value == (1 if i < 22 else 0)
