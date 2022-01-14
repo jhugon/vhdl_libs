@@ -58,30 +58,20 @@ class Representation:
 
 @cocotb.test()
 async def button_toggler_test(dut):
-    rep = Representation(dut,["clk", "btnC"],["led"],"clk")
+    TICKPRESCALE=1
+    TICKPERIOD=TICKPRESCALE+1
+    LED_PORT_WIDTH=4
+    LED_PORT_MOD=2**LED_PORT_WIDTH
+    rep = Representation(dut,["clk"],["led"],"clk")
     clock = dut.clk
-    sig_in = dut.btnC
-    sig_out = dut.led
+    led = dut.led
     cocotb.start_soon(Clock(clock, 10, units="ns").start())
-    sig_in.value = 0
-    for i in range(17):
+    for i in range(15):
         await FallingEdge(clock)
-    dut.reset.value = 0
-    assert sig_out.value == 0
+        print(i,rep.get_str())
+    assert led.value == 0
     ## Reset complete
-    sig_in.value = 0
-    for i in range(30):
+    for i in range(200):
         await FallingEdge(clock)
-        assert sig_out.value == 0
-    sig_in.value = 1
-    for i in range(30):
-        await FallingEdge(clock)
-        assert sig_out.value == (0 if i < 16 else 1)
-    sig_in.value = 0
-    for i in range(30):
-        await FallingEdge(clock)
-        assert sig_out.value == 1
-    sig_in.value = 1
-    for i in range(30):
-        await FallingEdge(clock)
-        assert sig_out.value == (1 if i < 22 else 0)
+        print(i,i//TICKPERIOD,rep.get_str())
+        assert led.value == (i//TICKPERIOD % LED_PORT_MOD)

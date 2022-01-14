@@ -3,11 +3,12 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.math_real.all;
 
+-- TICKPRESCALE: want 256 Hz from 100 MHz so 390625-1, make it smaller for sim testing
 entity top is
-    port(
-        clk : in std_logic;
-        led : out std_logic_vector(15 downto 0)
-        );
+    generic(LED_PORT_WIDTH: integer := 16;
+            TICKPRESCALE: integer := 390624);
+    port(clk : in std_logic;
+        led : out std_logic_vector(LED_PORT_WIDTH-1 downto 0));
 end;
 
 architecture behavioral of top is
@@ -40,13 +41,13 @@ architecture behavioral of top is
             trigger : out std_logic
         );
     end component;
-    signal count : std_logic_vector(15 downto 0);
+    signal count : std_logic_vector(LED_PORT_WIDTH-1 downto 0);
     signal reset : std_logic;
     signal tick : std_logic;
 begin
 -- submodules
 timer : simple_timer
-    generic map (Nbits => 16) 
+    generic map (Nbits => LED_PORT_WIDTH) 
     port map (
         clock => clk,
         reset => reset,
@@ -66,7 +67,7 @@ prescale_timer : programmable_timer_pulser
         clock => clk,
         reset => reset,
         enable => '1',
-        max_value => std_logic_vector(to_unsigned(390625,19)), -- want 256 Hz from 100 MHz
+        max_value => std_logic_vector(to_unsigned(TICKPRESCALE,19)),
         trigger_only_wraparound => '0',
         trigger => tick
     );
