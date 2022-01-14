@@ -3,12 +3,21 @@
 #
 # NOTE:  typical usage would be "vivado -mode batch -notrace -source run.tcl" 
 # 
+###########################
+# Configuration
+###########################
 # config the FPGA part
 set part xc7a35tcpg236-1
 # config the top level VHDL name:
 set top top
 # config the firmware filename
 set bitfilename basys3_buttons_toggle_leds.bit
+###########################
+# Other configuration
+###########################
+set_msg_config -id "Synth 8-7080" -new_severity "INFO"
+###########################
+#
 # STEP#0: define output directory area.
 #
 set outputDir ./vivado_output
