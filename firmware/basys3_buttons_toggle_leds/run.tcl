@@ -1,7 +1,7 @@
 #
 # A Vivado script that demonstrates a very simple RTL-to-bitstream non-project batch flow
 #
-# NOTE:  typical usage would be "vivado -mode tcl -source run.tcl" 
+# NOTE:  typical usage would be "vivado -mode batch -notrace -source run.tcl" 
 # 
 # config the FPGA part
 set part xc7a35tcpg236-1
@@ -31,6 +31,7 @@ synth_design -top $top -part $part
 write_checkpoint -force $outputDir/post_synth
 report_timing_summary -file $outputDir/post_synth_timing_summary.rpt
 report_power -file $outputDir/post_synth_power.rpt
+report_utilization -file $outputDir/post_synth_util.rpt
 #
 # STEP#3: run placement and logic optimzation, report utilization and timing estimates, write checkpoint design
 #
@@ -50,6 +51,7 @@ report_clock_utilization -file $outputDir/clock_util.rpt
 report_utilization -file $outputDir/post_route_util.rpt
 report_power -file $outputDir/post_route_power.rpt
 report_drc -file $outputDir/post_imp_drc.rpt
+report_methodology -file $outputDir/post_route_meth.rpt
 write_verilog -force $outputDir/impl_netlist.v
 write_xdc -no_fixed_only -force $outputDir/impl.xdc
 #

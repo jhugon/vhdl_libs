@@ -18,3 +18,10 @@ SIM_ARGS+=--vcd=test_top.vcd
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
+
+vivado_output/basys3_buttons_toggle_leds.bit: $(VHDL_SOURCES)
+	vivado -mode batch -notrace -source run.tcl
+
+vivado: vivado_output/basys3_buttons_toggle_leds.bit
+
+.PHONY: vivado
