@@ -43,7 +43,7 @@ architecture behavioral of button_toggler is
     signal pulse : std_logic;
 begin
 -- submodules
-sw : switch_input
+switch_inpt : switch_input
     port map (
         clock => clock,
         reset => reset,
@@ -52,7 +52,7 @@ sw : switch_input
         sig_in => sig_in,
         rising_edge_pulse => pulse
     );
-em : edge_maker
+edge_mkr : edge_maker
     port map (
         clock => clock,
         reset => reset,

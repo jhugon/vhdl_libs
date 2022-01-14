@@ -52,6 +52,7 @@ architecture compositional of simple_timer_pulser is
             trigger : out std_logic
         );
     end component;
+    signal count_internal : std_logic_vector(Nbits - 1 downto 0);
 begin
 timer: simple_timer
     generic map (
@@ -61,7 +62,7 @@ timer: simple_timer
         clock => clock,
         reset => reset,
         enable => enable,
-        count => count
+        count => count_internal
     );
 pulser: timer_pulser
     generic map (
@@ -70,10 +71,11 @@ pulser: timer_pulser
     port map (
         clock => clock,
         reset => reset,
-        count => count,
+        count => count_internal,
         trigger_only_wraparound => trigger_only_wraparound,
         trigger => trigger
     );
+count <= count_internal;
 end compositional;
 
 architecture compositional of programmable_timer_pulser is
@@ -97,6 +99,7 @@ architecture compositional of programmable_timer_pulser is
             trigger : out std_logic
         );
     end component;
+    signal count_internal : std_logic_vector(Nbits - 1 downto 0);
 begin
 timer: programmable_timer
     generic map (
@@ -107,7 +110,7 @@ timer: programmable_timer
         reset => reset,
         enable => enable,
         max_value => max_value,
-        count => count
+        count => count_internal
     );
 pulser: timer_pulser
     generic map (
@@ -116,8 +119,9 @@ pulser: timer_pulser
     port map (
         clock => clock,
         reset => reset,
-        count => count,
+        count => count_internal,
         trigger_only_wraparound => trigger_only_wraparound,
         trigger => trigger
     );
+count <= count_internal;
 end compositional;

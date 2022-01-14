@@ -34,28 +34,44 @@ architecture behavioral of top is
             trigger : out std_logic
         );
     end component;
+    component reset_timer is
+        generic(Nbits: integer := 4); -- N bits to use for counter
+        port(
+            clock : in std_logic;
+            count_to_reset : in std_logic_vector(Nbits - 1 downto 0);
+            reset : out std_logic
+        );
+    end component;
     signal tick : std_logic;
     signal led0 : std_logic;
+    signal reset : std_logic;
 begin
 -- submodules
-tg : button_toggler
+btn_tglr : button_toggler
     port map (
         clock => clk,
-        reset => '0',
+        reset => reset,
         reset_value => '0',
         tick => tick,
         sig_in => btnC,
         sig_out => led0
     );
-tmr : programmable_timer_pulser
+timer_plsr : programmable_timer_pulser
     generic map (Nbits => 8)
     port map (
         clock => clk,
-        reset => '0',
+        reset => reset,
         enable => '1',
         max_value => std_logic_vector(to_unsigned(255,8)),
         trigger_only_wraparound => '0',
         trigger => tick
+    );
+reset_ctrlr : reset_timer
+    generic map (Nbits => 4)
+    port map (
+        clock => clk,
+        count_to_reset => std_logic_vector(to_unsigned(15,4)),
+        reset => reset
     );
 -- output logic
 led(0) <= led0;
