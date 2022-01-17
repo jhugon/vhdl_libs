@@ -30,4 +30,4 @@ async def input_compare_test(dut):
     exp["matched"][N//3+compare_val+1:-compare_val+2] = 1
 
     nptest = NumpyTest(dut,inputs,exp,"clock")
-    await nptest.run(True,True)
+    await nptest.run()

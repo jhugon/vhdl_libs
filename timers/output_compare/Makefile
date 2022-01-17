@@ -13,7 +13,7 @@ TOPLEVEL = output_compare
 MODULE = test_output_compare
 
 # Outputs waveform
-SIM_ARGS+=--vcd=waveform_for_output_compare.vcd
+#SIM_ARGS+=--vcd=waveform_for_output_compare.vcd
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
