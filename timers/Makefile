@@ -1,4 +1,4 @@
-SUBDIRS =  programmable_timer/ simple_timer/ timer_pulser/ pulse_prescaler/ triggerable_timer/
+SUBDIRS =  programmable_timer/ simple_timer/ timer_pulser/ pulse_prescaler/ triggerable_timer/ input_compare/
 
 all: $(SUBDIRS)
 $(SUBDIRS):
