@@ -40,22 +40,6 @@ begin
         end if; -- rising edge clock
     end process;
     -- next state
-    -- process(sig_in,matched_reg,match_count_reg,count)
-    -- begin
-    --     if matched_reg = '1' then
-    --         next_matched_reg <= matched_reg;
-    --         next_match_count_reg <= match_count_reg;
-    --     else
-    --         if sig_in = '1' then
-    --             next_matched_reg <= '1';
-    --             next_match_count_reg <= count;
-    --         else
-    --             next_matched_reg <= matched_reg;
-    --             next_match_count_reg <= match_count_reg;
-    --         end if;
-    --     end if;
-    -- end process;
-    -- equiv to above
     next_matched_reg <= '1' when (matched_reg = '0') and (sig_in = '1') else matched_reg;
     next_match_count_reg <= count when (matched_reg = '0') and (sig_in = '1') else match_count_reg;
     -- output
