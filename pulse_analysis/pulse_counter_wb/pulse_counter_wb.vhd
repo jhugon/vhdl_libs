@@ -75,7 +75,7 @@ begin
                 enable_next <= enable_reg;
                 reset <= wb_rst_i;
                 if wb_sel_i(1) = '1' then
-                    wb_dat_o <= reset & enable_reg & (others => '0');
+                    wb_dat_o <= (0 => enable_reg, 1 => reset, others => '0');
                 else
                     wb_dat_o <= count;
                 end if;
