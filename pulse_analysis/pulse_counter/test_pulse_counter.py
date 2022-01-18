@@ -8,45 +8,62 @@ from cocotbnumpy.test import NumpyTest
 from cocotbnumpy.signal import NumpySignal
 import numpy as np
 
+def model(inputs):
+    reset = inputs["reset"]
+    sig_in = inputs["sig_in"]
+    enable = inputs["enable"]
+    N = len(sig_in)
+    result = NumpySignal(np.zeros(N),[1])
+    count = 0
+    for i in range(2,N):
+        rising_edge = 0
+        if sig_in[i-3] == 0 and sig_in[i-2] == 1:
+            rising_edge = 1
+        if reset[i-1]:
+            count = 0
+        else:
+            count += rising_edge*enable[i-1]
+        result[i] = count
+    exp = {
+        "count": result
+    }
+    return exp
 
 @cocotb.test()
-async def input_compare_test(dut):
-    ## Test match and reset
-    N = 20
-    pulse_at = 5
-    reset_at = 8
-    pulse2_at = 12
+async def pulse_counter_test(dut):
+    ## Test pulses and enable
+    N = 40
+    pulses_at = [5,6,7,9,15,20,30,35]
     inputs = {
         "reset": np.zeros(N),
         "enable": np.ones(N),
-        "count": np.arange(N),
         "sig_in": np.zeros(N),
     }
 
-    inputs["reset"][:2] = 1
-    # for pulse
-    inputs["sig_in"][pulse_at] = 1
-    # for reset_at
-    inputs["reset"][reset_at] = 1
-    # for pulse2
-    inputs["sig_in"][pulse2_at] = 1
+    inputs["reset"][:1] = 1
+    inputs["sig_in"][pulses_at] = 1
+    inputs["enable"][31] = 0 # diable for pulse at 30
 
-    exp = {
-        "matched": NumpySignal(np.zeros(N),[1,1]),
-        "match_count": NumpySignal(np.ones(N),np.ones(N)),
-    }
-
-    # for pulse
-    exp["matched"][pulse_at+1:] = 1
-    exp["match_count"][pulse_at+1:] = inputs["count"][pulse_at]
-    exp["match_count"].dontcaremask[pulse_at+1:] = 0
-    # for reset_at
-    exp["matched"][reset_at+1:] = 0
-    exp["match_count"].dontcaremask[reset_at+1:] = 1
-    # for pulse2
-    exp["matched"][pulse2_at+1:] = 1
-    exp["match_count"][pulse2_at+1:] = inputs["count"][pulse2_at]
-    exp["match_count"].dontcaremask[pulse2_at+1:] = 0
+    exp = model(inputs)
 
     nptest = NumpyTest(dut,inputs,exp,"clock")
-    await nptest.run()
+    await nptest.run(True,True)
+
+    ## Test pulses and reset
+
+    pulses_at = [5,6,7,9,15,20,30,35]
+    inputs = {
+        "reset": np.zeros(N),
+        "enable": np.ones(N),
+        "sig_in": np.zeros(N),
+    }
+
+    inputs["reset"][:1] = 1
+    inputs["reset"][[7,20]] = 1
+    inputs["sig_in"][pulses_at] = 1
+    inputs["enable"][31] = 0 # diable for pulse at 30
+
+    exp = model(inputs)
+
+    nptest = NumpyTest(dut,inputs,exp,"clock")
+    await nptest.run(True,True)

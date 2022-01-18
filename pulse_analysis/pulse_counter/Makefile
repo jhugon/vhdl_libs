@@ -13,7 +13,7 @@ TOPLEVEL = pulse_counter
 MODULE = test_pulse_counter
 
 # Outputs waveform
-#SIM_ARGS+=--vcd=waveform_for_pulse_counter.vcd
+SIM_ARGS+=--vcd=waveform_for_pulse_counter.vcd
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
