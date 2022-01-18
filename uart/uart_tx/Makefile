@@ -5,7 +5,7 @@ SIM = ghdl
 TOPLEVEL_LANG = vhdl
 COMPILE_ARGS+=--std=08
 
-VHDL_SOURCES += $(PWD)/uart_tx.vhd
+VHDL_SOURCES += $(PWD)/../../timers/simple_timer/simple_timer.vhd  $(PWD)/../../timers/programmable_timer/programmable_timer.vhd $(PWD)/uart_tx.vhd
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
 TOPLEVEL = uart_tx
