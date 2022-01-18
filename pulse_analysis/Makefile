@@ -1,4 +1,4 @@
-SUBDIRS = pulse_counter/
+SUBDIRS = pulse_counter/ pulse_counter_wb/
 
 all: $(SUBDIRS)
 $(SUBDIRS):
