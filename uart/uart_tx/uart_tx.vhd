@@ -4,10 +4,10 @@ use ieee.numeric_std.all;
 use ieee.math_real.all;
 
 entity uart_tx is
-    generic(clock_freq: integer := 100000000; -- in hertz
-            uart_freq: integer := 9600; -- in hertz
-            uart_period_n_clock : integer := clock_freq/uart_freq; -- don't mess with this
-            timer_bit_width: integer := integer(ceil(log2(real(uart_period_n_clock*10))))); -- don't mess with this
+    generic(CLOCK_FREQ: integer := 100000000; -- in hertz
+            UART_FREQ: integer := 9600; -- in hertz
+            UART_PERIOD_N_CLOCK : integer := CLOCK_FREQ/UART_FREQ; -- don't mess with this
+            TIMER_BIT_WIDTH: integer := integer(ceil(log2(real(UART_PERIOD_N_CLOCK))))); -- don't mess with this
     port(
         clock : in std_logic;
         reset : in std_logic;
@@ -42,14 +42,14 @@ architecture behavioral of uart_tx is
     signal ibit_reg : std_logic_vector(2 downto 0);
     signal next_ibit_reg : std_logic_vector(2 downto 0);
 
-    signal timer_count : std_logic_vector(timer_bit_width-1 downto 0);
+    signal timer_count : std_logic_vector(TIMER_BIT_WIDTH-1 downto 0);
     signal timer_reset : std_logic;
-    constant timer_max_value : std_logic_vector(timer_bit_width-1 downto 0) := std_logic_vector(to_unsigned(uart_period_n_clock,timer_bit_width));
+    constant timer_max_value : std_logic_vector(TIMER_BIT_WIDTH-1 downto 0) := std_logic_vector(to_unsigned(UART_PERIOD_N_CLOCK-1,TIMER_BIT_WIDTH));
     signal timer_enable : std_logic;
 begin
     -- components
     timer : programmable_timer
-        generic map(Nbits => timer_bit_width)
+        generic map(Nbits => TIMER_BIT_WIDTH)
         port map(
             clock => clock,
             reset => timer_reset,
@@ -69,6 +69,7 @@ begin
             -- not resettable
             data_reg <= next_data_reg;
             ibit_reg <= next_ibit_reg;
+            tx_reg <= next_tx_reg;
         end if;
     end process;
     -- bookkeeping
@@ -135,6 +136,6 @@ begin
     sending <= '1' when line_state /= IDLE_BIT else '0';
     tx <= tx_reg;
     -- assertion
-    assert uart_period_n_clock = clock_freq/uart_freq;
-    assert timer_bit_width = integer(ceil(log2(real(uart_period_n_clock*10))));
+    assert UART_PERIOD_N_CLOCK = CLOCK_FREQ/UART_FREQ;
+    assert TIMER_BIT_WIDTH = integer(ceil(log2(real(UART_PERIOD_N_CLOCK))));
 end behavioral;
