@@ -13,10 +13,13 @@ def model(inputs,bit_len):
     in_data = NumpySignal(inputs["in_data"])
     N = len(reset)
 
-    tx = NumpySignal(np.zeros(N))
+    tx = NumpySignal(np.ones(N))
     sending = NumpySignal(np.zeros(N))
     ready_for_in_data = NumpySignal(np.ones(N))
     data_reg = None
+
+    iCycle = None
+    next_frame_latched = False
 
     for i in range(N):
         if reset[i]:
@@ -24,32 +27,32 @@ def model(inputs,bit_len):
             sending.dontcaremask[i] = 1
     for i in range(1,N):
         if latch_in_data[i-1]:
-            data_reg = int(in_data[i-1])
-            sending[i] = 0
-            ready_for_in_data[i] = 0
-            tx[i] = 1
-        if data_reg is None: # before first latch in
+            if iCycle is None:
+                data_reg = int(in_data[i-1])
+                iCycle = 0
+            else:
+                iBit = int((iCycle-1)//bit_len)-1
+                iTick = int((iCycle-1) % bit_len)
+                #print(f"Trying to latch in data i: {i} iCycle={iCycle+1}, iBit: {iBit} iTick: {iTick}")
+                if (iBit == 8) and (not next_frame_latched):
+                    #print(f"Latched in data during stop bit iCycle={iCycle}, iBit: {int((iCycle-2)//bit_len)-1} iTick: {int((iCycle-2) % bit_len)}")
+                    data_reg = int(in_data[i-1])
+                    next_frame_latched = True 
+        if iCycle is None: # before latch in
             tx[i] = 1
             sending[i] = 0
             ready_for_in_data[i] = 1
         else:
-            count_since_latch_in_data = None
-            for iBack in range(1,i):
-                if latch_in_data[i-iBack]:
-                    count_since_latch_in_data = iBack
-                    break
-            iBit = int((count_since_latch_in_data-2)//bit_len)-1
-            iTick = int((count_since_latch_in_data-2) % bit_len)
-            #print(i,count_since_latch_in_data,iBit,bit_len)
-            if count_since_latch_in_data is None: # before first latch in
-                sending[i] = 0
-                ready_for_in_data[i] = 1
-                tx[i] = 1
-            elif count_since_latch_in_data < 2: # haven't started start bit yet, but latched
+            iCycle += 1
+            iBit = int((iCycle-2)//bit_len)-1
+            iTick = int((iCycle-2) % bit_len)
+            #print(f"i: {i} iCycle: {iCycle} iBit: {iBit} iTick: {iTick}")
+            if iCycle < 2: # haven't started start bit yet, but latched
                 sending[i] = 1
                 ready_for_in_data[i] = 0
                 tx[i] = 1
             elif iBit < 0: # start bit
+                next_frame_latched = False
                 sending[i] = 1
                 ready_for_in_data[i] = 0
                 tx[i] = 0
@@ -61,13 +64,17 @@ def model(inputs,bit_len):
                 else:
                     ready_for_in_data[i] = 0
                 tx[i] = (data_reg >> iBit) & 1
-                #print(f"i={i}, count_since_latch_in_data={count_since_latch_in_data}, iBit={iBit}, data_reg={data_reg}, tx[i]={tx[i]}")
+                #print(f"i={i}, iCycle={iCycle}, iBit={iBit}, data_reg={data_reg}, tx[i]={tx[i]}")
             elif iBit < 9: # stop bit
                 if iTick == bit_len-1: # last one swaps
-                    sending[i] = 0
+                    sending[i] = 1 if next_frame_latched else 0
+                    if next_frame_latched:
+                        iCycle = 1
+                    else:
+                        iCycle = None
                 else:
                     sending[i] = 1
-                ready_for_in_data[i] = 1
+                ready_for_in_data[i] = 0 if next_frame_latched else 1
                 tx[i] = 1
             else: # after stop bit/idle
                 sending[i] = 0
@@ -78,7 +85,8 @@ def model(inputs,bit_len):
 @cocotb.test()
 async def uart_tx_test(dut):
     bit_len = 4 # clock ticks
-    ## Test pulses and enable
+    ## Test with a simple byte
+    #print(f"First simple byte test")
     N = bit_len*15
     inputs = {
         "reset": np.zeros(N),
@@ -93,4 +101,26 @@ async def uart_tx_test(dut):
     exp = model(inputs,bit_len)
 
     nptest = NumpyTest(dut,inputs,exp,"clock")
-    await nptest.run(True)
+    await nptest.run()
+
+    ## Test with 2 bytes
+    for offset in range(-10,10):
+        #print(f"offset: {offset}")
+        #N = bit_len*25
+        N = bit_len*25
+        inputs = {
+            "reset": np.zeros(N),
+            "latch_in_data": np.zeros(N),
+            "in_data": np.zeros(N),
+        }
+
+        inputs["latch_in_data"][bit_len] = 1
+        inputs["in_data"][bit_len] =  0x1A+offset
+        inputs["latch_in_data"][bit_len*11+offset] = 1
+        inputs["in_data"][bit_len*11+offset] = 0x1A-offset
+
+        exp = model(inputs,bit_len)
+
+        nptest = NumpyTest(dut,inputs,exp,"clock")
+        await nptest.run()
+

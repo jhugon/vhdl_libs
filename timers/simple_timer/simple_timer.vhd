@@ -40,7 +40,7 @@ begin
         end if;
     end process;
     -- next state
-    count_next <= std_logic_vector(to_unsigned(to_integer(unsigned(count_reg))+1,Nbits)) when (enable = '1')else count_reg;
+    count_next <= std_logic_vector(to_unsigned((to_integer(unsigned(count_reg))+1) mod (2**Nbits),Nbits)) when (enable = '1') else count_reg;
     -- output
     count <= count_reg;
 end behavioral;

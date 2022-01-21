@@ -112,7 +112,7 @@ begin
                         next_ibit_reg <= ibit_reg;
                     else
                         next_line_state <= line_state;
-                        next_ibit_reg <= std_logic_vector(to_unsigned(ibit_reg_int+1,3));
+                        next_ibit_reg <= std_logic_vector(to_unsigned((ibit_reg_int+1) mod (2**3),3));
                     end if;
                 else
                     next_line_state <= line_state;
