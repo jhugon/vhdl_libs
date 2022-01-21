@@ -31,7 +31,7 @@ def model(inputs):
 
 @cocotb.test()
 async def pulse_counter_test(dut):
-    ## Test pulses and enable
+    ## Test pulses
     N = 40
     pulses_at = [5,6,7,9,15,20,30,35]
     inputs = {
@@ -42,7 +42,6 @@ async def pulse_counter_test(dut):
 
     inputs["reset"][:1] = 1
     inputs["sig_in"][pulses_at] = 1
-    inputs["enable"][31] = 0 # diable for pulse at 30
 
     exp = model(inputs)
 
@@ -51,8 +50,8 @@ async def pulse_counter_test(dut):
 
     ## Test pulses and reset
 
-    N = 38
-    pulses_at = [5,10,15,20,25,30,35]
+    N = 50
+    pulses_at = [5,10,15,20,25,30,35,40,45]
     inputs = {
         "reset": np.zeros(N),
         "enable": np.ones(N),
@@ -60,9 +59,29 @@ async def pulse_counter_test(dut):
     }
 
     inputs["reset"][:1] = 1
-    inputs["reset"][[4,10,16,22]] = 1
-    inputs["sig_in"][pulses_at] = 1
-    inputs["enable"][31] = 0 # diable for pulse at 30
+    for iEl,i in enumerate(pulses_at):
+        inputs["sig_in"][i] = 1
+        inputs["reset"][i+iEl-4] = 1
+
+    exp = model(inputs)
+
+    nptest = NumpyTest(dut,inputs,exp,"clock")
+    await nptest.run()
+
+    ## Test pulses and enable
+
+    N = 50
+    pulses_at = [5,10,15,20,25,30,35,40,45]
+    inputs = {
+        "reset": np.zeros(N),
+        "enable": np.zeros(N),
+        "sig_in": np.zeros(N),
+    }
+
+    inputs["reset"][:1] = 1
+    for iEl,i in enumerate(pulses_at):
+        inputs["sig_in"][i] = 1
+        inputs["enable"][i+iEl-4] = 1
 
     exp = model(inputs)
 
