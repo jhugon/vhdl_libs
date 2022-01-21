@@ -15,6 +15,7 @@ def model(inputs,bit_len):
 
     tx = NumpySignal(np.zeros(N))
     sending = NumpySignal(np.zeros(N))
+    ready_for_in_data = NumpySignal(np.ones(N))
     data_reg = None
 
     for i in range(N):
@@ -25,9 +26,12 @@ def model(inputs,bit_len):
         if latch_in_data[i-1]:
             data_reg = int(in_data[i-1])
             sending[i] = 0
+            ready_for_in_data[i] = 0
             tx[i] = 1
-        if data_reg is None:
+        if data_reg is None: # before first latch in
             tx[i] = 1
+            sending[i] = 0
+            ready_for_in_data[i] = 1
         else:
             count_since_latch_in_data = None
             for iBack in range(1,i):
@@ -35,29 +39,41 @@ def model(inputs,bit_len):
                     count_since_latch_in_data = iBack
                     break
             iBit = int((count_since_latch_in_data-2)//bit_len)-1
-            print(i,count_since_latch_in_data,iBit,bit_len)
-            if count_since_latch_in_data is None:
+            iTick = int((count_since_latch_in_data-2) % bit_len)
+            #print(i,count_since_latch_in_data,iBit,bit_len)
+            if count_since_latch_in_data is None: # before first latch in
                 sending[i] = 0
+                ready_for_in_data[i] = 1
                 tx[i] = 1
-            elif count_since_latch_in_data < 2:
+            elif count_since_latch_in_data < 2: # haven't started start bit yet, but latched
                 sending[i] = 1
+                ready_for_in_data[i] = 0
                 tx[i] = 1
-            elif iBit < 0:
+            elif iBit < 0: # start bit
                 sending[i] = 1
+                ready_for_in_data[i] = 0
                 tx[i] = 0
-            elif iBit < 8:
+            elif iBit < 8: # data bits
                 sending[i] = 1
+                ready_for_in_data[i] = 0
+                if iBit == 7 and iTick == bit_len-1: # last one swaps
+                    ready_for_in_data[i] = 1
+                else:
+                    ready_for_in_data[i] = 0
                 tx[i] = (data_reg >> iBit) & 1
-                print(f"i={i}, count_since_latch_in_data={count_since_latch_in_data}, iBit={iBit}, data_reg={data_reg}, tx[i]={tx[i]}")
-            elif iBit < 9:
-                sending[i] = 1
+                #print(f"i={i}, count_since_latch_in_data={count_since_latch_in_data}, iBit={iBit}, data_reg={data_reg}, tx[i]={tx[i]}")
+            elif iBit < 9: # stop bit
+                if iTick == bit_len-1: # last one swaps
+                    sending[i] = 0
+                else:
+                    sending[i] = 1
+                ready_for_in_data[i] = 1
                 tx[i] = 1
-            else:
+            else: # after stop bit/idle
                 sending[i] = 0
+                ready_for_in_data[i] = 1
                 tx[i] = 1
-                
-
-    return {"tx":tx, "sending":sending}
+    return {"tx":tx, "sending":sending, "ready_for_in_data":ready_for_in_data}
 
 @cocotb.test()
 async def uart_tx_test(dut):

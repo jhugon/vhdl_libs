@@ -14,7 +14,8 @@ entity uart_tx is
         latch_in_data : in std_logic; -- pulse high to latch data and start sending
         in_data : in std_logic_vector(7 downto 0);
         tx : out std_logic;
-        sending : out std_logic -- tx in process, don't update in_data or put latch_in_data high if this is high
+        sending : out std_logic; -- tx in process
+        ready_for_in_data : out std_logic -- data will be latched when this and latch_in_data are both high
     );
 end uart_tx;
 
@@ -30,7 +31,7 @@ architecture behavioral of uart_tx is
         );
     end component;
 
-    type line_state_type is (IDLE_BIT,START_BIT,DATA_BIT,STOP_BIT);
+    type line_state_type is (IDLE_BIT,START_BIT,DATA_BIT,STOP_BIT,STOP_BIT_DATA_LATCHED);
     signal line_state : line_state_type;
     signal next_line_state : line_state_type;
 
@@ -120,8 +121,24 @@ begin
                 end if;
                 next_tx_reg <= data_reg(data_reg'low);
             when STOP_BIT => 
+                if latch_in_data = '1' and timer_count = timer_max_value then
+                    next_line_state <= START_BIT;
+                    next_data_reg <= in_data;
+                elsif latch_in_data = '1' then
+                    next_line_state <= STOP_BIT_DATA_LATCHED;
+                    next_data_reg <= in_data;
+                elsif timer_count = timer_max_value then
+                    next_line_state <= IDLE_BIT;
+                    next_data_reg <= data_reg;
+                else
+                    next_line_state <= line_state;
+                    next_data_reg <= data_reg;
+                end if;
+                next_tx_reg <= '1';
+                next_ibit_reg <= 3d"0";
+            when STOP_BIT_DATA_LATCHED => 
                 if timer_count = timer_max_value then
-                   next_line_state <= IDLE_BIT;
+                   next_line_state <= START_BIT;
                 else
                    next_line_state <= line_state;
                 end if;
@@ -135,6 +152,7 @@ begin
     -- output
     sending <= '1' when line_state /= IDLE_BIT else '0';
     tx <= tx_reg;
+    ready_for_in_data <= '1' when (line_state = IDLE_BIT) or (line_state = STOP_BIT) else '0';
     -- assertion
     assert UART_PERIOD_N_CLOCK = CLOCK_FREQ/UART_FREQ;
     assert TIMER_BIT_WIDTH = integer(ceil(log2(real(UART_PERIOD_N_CLOCK))));
