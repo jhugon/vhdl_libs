@@ -1,4 +1,4 @@
-SUBDIRS = edges/ switches/ timers/ reset_controler/ firmware/ uart/
+SUBDIRS = edges/ switches/ timers/ reset_controler/ firmware/ uart/ seven_seg_display/
 
 all: $(SUBDIRS)
 $(SUBDIRS):
