@@ -1,4 +1,4 @@
-SUBDIRS = switch_debouncer/ double_flip_flop/ switch_input/ button_toggler/
+SUBDIRS := $(wildcard */)
 
 all: $(SUBDIRS)
 $(SUBDIRS):

@@ -1,4 +1,4 @@
-SUBDIRS = edge_detector/ edge_maker/
+SUBDIRS := $(wildcard */)
 
 all: $(SUBDIRS)
 $(SUBDIRS):

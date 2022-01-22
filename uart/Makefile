@@ -1,4 +1,4 @@
-SUBDIRS = uart_tx/
+SUBDIRS := $(wildcard */)
 
 all: $(SUBDIRS)
 $(SUBDIRS):
