@@ -21,7 +21,7 @@ jobs:
         python-version: "3.9"
     - name: Install dependencies
       run: |
-        sudo apt-get install make gcc g++ python3.9-dev python3-pip gnat-10 llvm-12
+        sudo apt-get install make gcc g++ python3.9-dev python3-pip gnat-10 llvm-10
         python -m pip install --upgrade pip
         pip install pipenv
         pipenv install
@@ -32,7 +32,7 @@ jobs:
         wget https://github.com/ghdl/ghdl/archive/refs/tags/v1.0.0.tar.gz
         tar xzf *.gz
         cd ghdl*
-        ./configure --with-llvm-config=$(which llvm-config-12)
+        ./configure --with-llvm-config=$(which llvm-config-10)
         make
         sudo make install
     - name: Run make
