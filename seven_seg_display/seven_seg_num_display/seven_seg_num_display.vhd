@@ -38,6 +38,16 @@ architecture behavioral of seven_seg_num_display is
             out_segments : out std_logic_vector(6 downto 0)
         );
     end component;
+    component binary_to_bcd_converter is
+        generic (
+            Ndigits : integer := 2
+        );
+        port(
+            clock : in std_logic;
+            in_num : in std_logic_vector(integer(ceil(log2(real(10**Ndigits-1))))-1 downto 0);
+            out_digits : out std_logic_vector(Ndigits*4-1 downto 0)
+        );
+    end component;
     signal decoded_segments : std_logic_vector(Ndigits*7-1 downto 0);
     signal converted_reg : std_logic_vector(Ndigits*4-1 downto 0) := std_logic_vector(to_unsigned(0,Ndigits*4));
     signal converted_next : std_logic_vector(Ndigits*4-1 downto 0);
