@@ -3,15 +3,9 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.math_real.all;
 
--- in_segments is each digit's segment signals concatenated, most significant
--- digit with the highest index.
---
 -- out_segments is the multiplexed 7-segment output, synchronized with digit_enables.
 --
 -- digit_enables sets each digit high in turn, most significan digi, highest index
---
--- Want to switch digit between 60 Hz and 1000 Hz
--- So ceil(log2(ClockFreq/1000)) is the number of bits and should be close
 entity seven_seg_num_display is
     generic (
         Ndigits : integer := 2;
@@ -19,70 +13,62 @@ entity seven_seg_num_display is
     );
     port(
         clock : in std_logic;
-        in_segments : in std_logic_vector(Ndigits*7-1 downto 0);
-        out_segments : out std_logic_vector(6 downto 0);
+        in_num : in std_logic_vector(floor(log2(10**Ndigits-1))-1 downto 0);
+        out_segments : out std_logic_vector(Ndigits*7-1 downto 0);
         digit_enables : out std_logic_vector(Ndigits-1 downto 0)
     );
 end seven_seg_num_display;
 
 architecture behavioral of seven_seg_num_display is
-    component simple_timer is
-        generic(Nbits: integer := 10); -- N bits to use for counter
+    component seven_seg_decoder is
         port(
-            clock : in std_logic;
-            reset : in std_logic;
-            enable : in std_logic;
-            count : out std_logic_vector(Nbits - 1 downto 0)
+            in_data : in std_logic_vector(3 downto 0);
+            out_segments : out std_logic_vector(6 downto 0)
         );
     end component;
-    signal timer_count : std_logic_vector(integer(ceil(log2(real(ClockFreq/1000)))) -1 downto 0);
-    signal iDigit_reg : std_logic_vector(integer(ceil(log2(real(Ndigits))))-1 downto 0) := (others => '0');
-    signal iDigit_next : std_logic_vector(integer(ceil(log2(real(Ndigits))))-1 downto 0);
-    constant timer_zero : unsigned := to_unsigned(0,integer(ceil(log2(real(ClockFreq/1000)))));
+    component seven_seg_digit_mux is
+        generic (
+            Ndigits : integer := 2;
+            ClockFreq : integer := 100000000 -- in Hz
+        );
+        port(
+            clock : in std_logic;
+            in_segments : in std_logic_vector(Ndigits*7-1 downto 0);
+            out_segments : out std_logic_vector(6 downto 0);
+            digit_enables : out std_logic_vector(Ndigits-1 downto 0)
+        );
+    end component;
+    signal decoded_segments : std_logic_vector(Ndigits*7-1 downto 0);
+    signal converted_reg : std_logic_vector(Ndigits*7-1 downto 0) := std_logic_vector(to_unsigned(0,Ndigits*7));
+    signal converted_next : std_logic_vector(Ndigits*7-1 downto 0);
 begin
     -- components
-    timer : simple_timer
-        generic map (Nbits => integer(ceil(log2(real(ClockFreq/1000)))))
+
+    -- need multiple of these?
+    decoder : seven_seg_decoder
+        port map (
+            in_data => converted_reg(???),
+            out_segments => decoded_segments(???)
+        );
+    mux : seven_seg_digit_mux
+        generic map (Ndigits => Ndigits, ClockFreq => ClockFreq)
         port map (
             clock => clock,
-            reset => '0',
-            enable => '1',
-            count => timer_count
+            in_segments => decoded_segments,
+            out_segments => out_segments,
+            digit_enables => digit_enables
         );
     -- registers
     reg_proc : process(clock)
     begin
         if rising_edge(clock) then
-            iDigit_reg <= iDigit_next;
+            converted_reg <= converted_next;
         end if;
     end process;
     -- next state
-    proc_next_state : process(timer_count,iDigit_reg)
-        variable iDigit_int_loc : integer;
+    proc_next_state : process(in_num)
     begin
-        iDigit_int_loc := to_integer(unsigned(iDigit_reg));
-        if timer_count = std_logic_vector(timer_zero) then
-            if iDigit_int_loc+1 >= Ndigits then
-                iDigit_next <= (others => '0');
-            else
-                iDigit_next <= std_logic_vector(to_unsigned(iDigit_int_loc+1,integer(ceil(log2(real(Ndigits))))));
-            end if;
-        else
-            iDigit_next <= iDigit_reg;
-        end if;
+        converted_next <= ???;
     end process;
     -- output
-    proc_output : process(in_segments,iDigit_reg)
-        variable iDigit_int_loc : integer;
-    begin
-        iDigit_int_loc := to_integer(unsigned(iDigit_reg));
-        for i in 0 to Ndigits - 1 loop
-            if i = iDigit_int_loc then
-                digit_enables(i) <= '1';
-            else
-                digit_enables(i) <= '0';
-            end if;
-        end loop;
-        out_segments <= in_segments((iDigit_int_loc+1)*7-1 downto iDigit_int_loc*7);
-    end process;
 end behavioral;
