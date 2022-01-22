@@ -6,7 +6,7 @@ use ieee.math_real.all;
 -- out_segments is the multiplexed 7-segment output, synchronized with digit_enables.
 --
 -- digit_enables sets each digit high in turn, most significan digi, highest index
-entity seven_seg_num_display is
+entity seven_seg_dec_display is
     generic (
         Ndigits : integer := 2;
         ClockFreq : integer := 100000000; -- in Hz
@@ -18,9 +18,9 @@ entity seven_seg_num_display is
         out_segments : out std_logic_vector(6 downto 0);
         digit_enables : out std_logic_vector(Ndigits-1 downto 0)
     );
-end seven_seg_num_display;
+end seven_seg_dec_display;
 
-architecture behavioral of seven_seg_num_display is
+architecture behavioral of seven_seg_dec_display is
     component seven_seg_digit_mux is
         generic (
             Ndigits : integer := 2;
