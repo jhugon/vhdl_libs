@@ -50,10 +50,10 @@ begin
             count => count
         );
     display : seven_seg_dec_display
-        generic map (Ndigits => N_DIGITS) 
+        generic map (Ndigits => N_DIGITS, ClockFreq => CLK_FREQ)
         port map (
             clock => clk,
-            in_num => count(count'length-1 downto count'length-in_num_bits-1),
+            in_num => count(count'length-1 downto count'length-in_num_bits),
             out_segments => seg_enables,
             digit_enables => digit_enables
         );

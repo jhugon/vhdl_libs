@@ -14,7 +14,7 @@ TOPLEVEL = top
 MODULE = test_top
 
 # Outputs waveform
-#SIM_ARGS+=--vcd=waveform_counter_blink_leds.vcd
+SIM_ARGS+=--vcd=waveform_counter_7seg_display.vcd
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
