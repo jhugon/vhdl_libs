@@ -14,7 +14,7 @@ TOPLEVEL = seven_seg_digit_mux
 MODULE = test_seven_seg_digit_mux
 
 # Outputs waveform
-#SIM_ARGS+=--vcd=waveform_seven_seg_digit_mux.vcd
+SIM_ARGS+=--vcd=waveform_seven_seg_digit_mux.vcd
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
