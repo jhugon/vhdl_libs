@@ -15,7 +15,7 @@ def model(inputs,digit_len):
 
     out_segments = np.zeros(N)
     digit_enables = np.zeros(N,dtype=np.uint32)
-    converted_reg = np.zeros(N)
+    converted = np.zeros(N)
 
     for i in range(1,N):
         num_str = "{:02}".format(in_num[i-1])
@@ -23,8 +23,8 @@ def model(inputs,digit_len):
         for j in range(Ndigits):
             bcd += int(num_str[Ndigits-j-1]) << 4*j
         print(f"i={i} in_num={in_num[i-1]} num_str={num_str} bcd={bcd:02X}")
-        converted_reg[i] = bcd
-    return {"out_segments":out_segments, "digit_enables":digit_enables, "converted_reg":converted_reg}
+        converted[i] = bcd
+    return {"out_segments":out_segments, "digit_enables":digit_enables, "converted":converted}
 
 @cocotb.test()
 async def seven_seg_num_display_test(dut):
