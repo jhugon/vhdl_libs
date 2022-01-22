@@ -1,4 +1,4 @@
-SUBDIRS =  reset_timer/
+SUBDIRS := $(wildcard */)
 
 all: $(SUBDIRS)
 $(SUBDIRS):

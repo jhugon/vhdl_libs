@@ -1,0 +1,14 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+cocotb = {version = "~=1.6.1", extras = ["bus"]}
+pytest = "~=6.2.5"
+cocotb-numpy = {editable = true, ref = "main", git = "https://github.com/jhugon/cocotb-numpy.git"}
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
