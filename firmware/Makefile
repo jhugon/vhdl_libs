@@ -1,4 +1,4 @@
-SUBDIRS = basys3_buttons_toggle_leds/ basys3_counter_blink_leds/
+SUBDIRS := $(wildcard */)
 
 all: $(SUBDIRS)
 $(SUBDIRS):

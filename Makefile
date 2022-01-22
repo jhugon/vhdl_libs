@@ -1,4 +1,7 @@
-SUBDIRS = edges/ switches/ timers/ reset_controler/ firmware/ uart/ seven_seg_display/
+SUBDIRS := $(wildcard */)
+SUBDIRS := $(filter-out doc/, $(SUBDIRS))
+SUBDIRS := $(filter-out vunit_old/, $(SUBDIRS))
+$(info $(SUBDIRS))
 
 all: $(SUBDIRS)
 $(SUBDIRS):

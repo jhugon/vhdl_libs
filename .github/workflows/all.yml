@@ -1,0 +1,40 @@
+name: All
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  cocotb-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: "Set up Python 3.9"
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.9"
+    - name: Install dependencies
+      run: |
+        sudo apt-get install make gcc g++ python3.9-dev python3-pip gnat-10 llvm-10
+        python -m pip install --upgrade pip
+        pip install pipenv
+        pipenv install
+    - name: Install ghdl-1.0.0
+      run: |
+        mkdir .ghdl_build
+        cd .ghdl_build
+        wget https://github.com/ghdl/ghdl/archive/refs/tags/v1.0.0.tar.gz
+        tar xzf *.gz
+        cd ghdl*
+        ./configure --with-llvm-config=$(which llvm-config-10)
+        make
+        sudo make install
+    - name: Run make
+      run: |
+        pipenv run make
