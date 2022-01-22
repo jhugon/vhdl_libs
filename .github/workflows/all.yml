@@ -38,3 +38,7 @@ jobs:
     - name: Run make
       run: |
         pipenv run make
+    - name: Collect results
+      run: |
+        wget https://raw.githubusercontent.com/cocotb/cocotb/83476d8babcabc38a9dede451768d9fc196501e0/bin/combine_results.py
+        python combine_results.py

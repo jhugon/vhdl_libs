@@ -25,7 +25,7 @@ entity simple_timer is
 end simple_timer;
 
 architecture behavioral of simple_timer is
-    signal count_reg : std_logic_vector(Nbits - 1 downto 0);
+    signal count_reg : std_logic_vector(Nbits - 1 downto 0) := std_logic_vector(to_unsigned(0,Nbits));
     signal count_next : std_logic_vector(Nbits - 1 downto 0);
 begin
     -- registers
