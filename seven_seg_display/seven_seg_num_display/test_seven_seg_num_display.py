@@ -8,38 +8,31 @@ from cocotbnumpy.signal import NumpySignal
 import numpy as np
 
 def model(inputs,digit_len):
-    in_segments = inputs["in_segments"]
-    N = len(in_segments)
+    in_num = inputs["in_num"]
+    N = len(in_num)
 
     Ndigits = 2
 
-    digit_enables = np.zeros(N)
-    iDigit_reg = np.zeros(N,dtype=np.uint32)
-    timer_count = np.zeros(N)
     out_segments = np.zeros(N)
+    digit_enables = np.zeros(N,dtype=np.uint32)
+    converted_reg = np.zeros(N)
 
     for i in range(1,N):
-        timer_count[i] = (timer_count[i-1]+1) % digit_len
-        if timer_count[i-1] == 0:
-            iDigit_reg[i] = (iDigit_reg[i-1]+1) % Ndigits
-        else:
-            iDigit_reg[i] = iDigit_reg[i-1]
-    digit_enables = 2**iDigit_reg
-    out_segments[1:] = np.right_shift(in_segments[:-1],iDigit_reg[1:]*7) & 0b1111111
-
-    return {"out_segments":out_segments, "digit_enables":digit_enables, "iDigit_reg":iDigit_reg, "timer_count":timer_count}
+        num_str = "{:02}".format(in_num[i-1])
+        bcd = 0
+        for j in range(Ndigits):
+            bcd += int(num_str[Ndigits-j-1]) << 4*j
+        print(f"i={i} in_num={in_num[i-1]} num_str={num_str} bcd={bcd:02X}")
+        converted_reg[i] = bcd
+    return {"out_segments":out_segments, "digit_enables":digit_enables, "converted_reg":converted_reg}
 
 @cocotb.test()
 async def seven_seg_num_display_test(dut):
     digit_len = 4 # clock ticks
-    ## Test with a simple byte
-    #print(f"First simple byte test")
-    N = digit_len*10
+    N = digit_len*8
     inputs = {
-        "in_segments": np.concatenate([
-            np.ones(N,dtype=np.uint32)*0b10101010101010,
-            np.ones(N+1,dtype=np.uint32)*1,
-            np.ones(N,dtype=np.uint32)*0b11100010001011,
+        "in_num": np.concatenate([
+            np.ones(N,dtype=np.uint32)*i for i in range(8,12)
         ]),
     }
 

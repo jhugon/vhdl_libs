@@ -88,6 +88,9 @@ begin
             digits(0) := shift_left(digits(0),1);
             digits(0)(0) := in_num(iBit);
         end loop;
+        for i in Ndigits-1 to 0 loop
+            converted_next((i+1)*4-1 downto i*4) <= std_logic_vector(digits(i));
+        end loop;
     end process;
     -- output
 end behavioral;
