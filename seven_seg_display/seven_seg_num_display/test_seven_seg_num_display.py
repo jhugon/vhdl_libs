@@ -22,9 +22,10 @@ def model(inputs,digit_len):
         bcd = 0
         for j in range(Ndigits):
             bcd += int(num_str[Ndigits-j-1]) << 4*j
-        print(f"i={i} in_num={in_num[i-1]} num_str={num_str} bcd={bcd:02X}")
+        #print(f"i={i} in_num={in_num[i-1]} num_str={num_str} bcd={bcd:02X}")
         converted[i] = bcd
-    return {"out_segments":out_segments, "digit_enables":digit_enables, "converted":converted}
+    #return {"out_segments":out_segments, "digit_enables":digit_enables, "converted":converted}
+    return {"converted":converted}
 
 @cocotb.test()
 async def seven_seg_num_display_test(dut):
