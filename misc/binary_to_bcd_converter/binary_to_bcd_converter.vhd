@@ -34,23 +34,23 @@ begin
     proc_next_state : process(in_num)
         variable digits : digit_unsigned_array;
     begin
-        for i in Ndigits-1 to 0 loop
+        for i in Ndigits-1 downto 0 loop
             digits(i) := (others => '0');
         end loop;
-        for iBit in 0 to in_num'length-1 loop
-            for i in Ndigits-1 to 0 loop
+        for iBit in in_num'length-1  downto 0 loop
+            for i in Ndigits-1 downto 0 loop
                 if to_integer(digits(i)) >= 5 then
                     digits(i) := to_unsigned(to_integer(digits(i))+3,4);
                 end if;
             end loop;
-            for i in Ndigits-1 to 1 loop
+            for i in Ndigits-1 downto 1 loop
                 digits(i) := shift_left(digits(i),1);
                 digits(i)(0) := digits(i-1)(3);
             end loop;
             digits(0) := shift_left(digits(0),1);
             digits(0)(0) := in_num(iBit);
         end loop;
-        for i in Ndigits-1 to 0 loop
+        for i in Ndigits-1 downto 0 loop
             out_digits_next((i+1)*4-1 downto i*4) <= std_logic_vector(digits(i));
         end loop;
     end process;
