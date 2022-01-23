@@ -58,14 +58,14 @@ begin
     end process;
     -- next state
     proc_next_state : process(timer_count,iDigit_reg)
-        variable iDigit_int_loc : integer;
+        variable iDigit_loc : unsigned(integer(ceil(log2(real(Ndigits))))-1 downto 0);
     begin
-        iDigit_int_loc := to_integer(unsigned(iDigit_reg));
+        iDigit_loc := unsigned(iDigit_reg);
         if timer_count = std_logic_vector(timer_zero) then
-            if iDigit_int_loc+1 >= Ndigits then
+            if iDigit_loc+1 >= Ndigits then
                 iDigit_next <= (others => '0');
             else
-                iDigit_next <= std_logic_vector(to_unsigned(iDigit_int_loc+1,integer(ceil(log2(real(Ndigits))))));
+                iDigit_next <= std_logic_vector(iDigit_loc+1);
             end if;
         else
             iDigit_next <= iDigit_reg;
@@ -73,16 +73,16 @@ begin
     end process;
     -- output
     proc_output : process(in_segments,iDigit_reg)
-        variable iDigit_int_loc : integer;
+        variable iDigit_loc : integer;
     begin
-        iDigit_int_loc := to_integer(unsigned(iDigit_reg));
+        iDigit_loc := to_integer(unsigned(iDigit_reg));
         for i in 0 to Ndigits - 1 loop
-            if i = iDigit_int_loc then
+            if i = iDigit_loc then
                 digit_enables(i) <= '1';
             else
                 digit_enables(i) <= '0';
             end if;
         end loop;
-        out_segments <= in_segments((iDigit_int_loc+1)*7-1 downto iDigit_int_loc*7);
+        out_segments <= in_segments((iDigit_loc+1)*7-1 downto iDigit_loc*7);
     end process;
 end behavioral;
