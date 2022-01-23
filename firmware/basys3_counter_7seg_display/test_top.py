@@ -9,13 +9,16 @@ import numpy as np
 
 def model(inputs,N):
 
-    seg = np.zeros(N,dtype=np.uint32)
-    an = np.zeros(N,dtype=np.uint32)
+    seg = NumpySignal(np.zeros(N,dtype=np.uint32),[1]*N)
+    an = NumpySignal(np.zeros(N,dtype=np.uint32),[1]*N)
 
     return {"seg":seg, "an":an}
 
 @cocotb.test()
 async def fw_counter_seven_seg_display_test(dut):
+    """
+    Dummy test, b/c real hardware is the test of the display
+    """
     ## Test with a simple byte
     N = 100
     inputs = {
