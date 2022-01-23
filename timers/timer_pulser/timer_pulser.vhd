@@ -23,8 +23,8 @@ architecture behavioral of timer_pulser is
     signal last_count_reg: std_logic_vector(Nbits - 1 downto 0);
     signal count_reg_next: std_logic_vector(Nbits - 1 downto 0);
     signal last_count_reg_next: std_logic_vector(Nbits - 1 downto 0);
-    signal count_num: integer;
-    signal count_reg_num: integer;
+    signal count_num: unsigned(Nbits - 1 downto 0);
+    signal count_reg_num: unsigned(Nbits - 1 downto 0);
 begin
     -- registers
     process(clock)
@@ -40,8 +40,8 @@ begin
         end if;
     end process;
     -- bookkeeping
-    count_reg_num <= to_integer(unsigned(count_reg));
-    count_num <= to_integer(unsigned(count));
+    count_reg_num <= unsigned(count_reg);
+    count_num <= unsigned(count);
     -- next state
     count_reg_next <= count;
     last_count_reg_next <= count_reg;

@@ -19,7 +19,6 @@ entity binary_to_bcd_converter is
 end binary_to_bcd_converter;
 
 architecture behavioral of binary_to_bcd_converter is
-    type digit_int_array is array (Ndigits-1 downto 0) of integer;
     type digit_unsigned_array is array (Ndigits-1 downto 0) of unsigned(3 downto 0);
     signal out_digits_next : std_logic_vector(Ndigits*4-1 downto 0);
 begin
@@ -39,8 +38,8 @@ begin
         end loop;
         for iBit in in_num'length-1  downto 0 loop
             for i in Ndigits-1 downto 0 loop
-                if to_integer(digits(i)) >= 5 then
-                    digits(i) := to_unsigned(to_integer(digits(i))+3,4);
+                if digits(i) >= 5 then
+                    digits(i) := digits(i)+3;
                 end if;
             end loop;
             for i in Ndigits-1 downto 1 loop

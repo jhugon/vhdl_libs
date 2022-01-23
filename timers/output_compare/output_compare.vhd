@@ -15,19 +15,19 @@ entity output_compare is
 end;
 
 architecture behavioral of output_compare is
-    signal count_int : integer;
-    signal compare_int : integer;
+    signal count_num : unsigned(Nbits - 1 downto 0);
+    signal compare_num : unsigned(Nbits - 1 downto 0);
     -- only used if use_ff > 0
     signal matched_reg : std_logic;
     signal next_matched_reg : std_logic;
 begin
     -- bookkeeping
-    compare_int <= to_integer(unsigned(compare));
-    count_int <= to_integer(unsigned(count));
+    compare_num <= unsigned(compare);
+    count_num <= unsigned(count);
 
     output_comb: if use_ff = 0 generate
         -- output
-        matched <= '1' when count_int >= compare_int else '0';
+        matched <= '1' when count_num >= compare_num else '0';
     end generate output_comb;
 
     output_ff: if use_ff > 0 generate
@@ -39,7 +39,7 @@ begin
             end if; -- rising edge clock
         end process;
         -- next state
-        next_matched_reg <= '1' when count_int >= compare_int else '0';
+        next_matched_reg <= '1' when count_num >= compare_num else '0';
         -- output
         matched <= matched_reg;
     end generate output_ff;
