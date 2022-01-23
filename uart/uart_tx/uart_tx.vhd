@@ -76,13 +76,9 @@ begin
     -- bookkeeping
     -- next state
     process(all)
-        variable timer_max_value_int : integer;
-        variable timer_count_int : integer;
-        variable ibit_reg_int : integer;
+        variable ibit_reg_num : unsigned(2 downto 0);
     begin
-        timer_max_value_int := to_integer(unsigned(timer_max_value));
-        timer_count_int := to_integer(unsigned(timer_count));
-        ibit_reg_int := to_integer(unsigned(ibit_reg));
+        ibit_reg_num := unsigned(ibit_reg);
         case line_state is
             when IDLE_BIT => 
                 if latch_in_data then
@@ -112,7 +108,7 @@ begin
                         next_ibit_reg <= ibit_reg;
                     else
                         next_line_state <= line_state;
-                        next_ibit_reg <= std_logic_vector(to_unsigned((ibit_reg_int+1) mod (2**3),3));
+                        next_ibit_reg <= std_logic_vector((ibit_reg_num+1) mod (2**3));
                     end if;
                 else
                     next_line_state <= line_state;

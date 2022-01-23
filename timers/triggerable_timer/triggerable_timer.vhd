@@ -40,7 +40,7 @@ architecture behavioral of triggerable_timer is
     signal trigger_internal: std_logic;
     signal count_internal: std_logic_vector(Nbits - 1 downto 0);
     signal last_count: std_logic_vector(Nbits - 1 downto 0);
-    signal count_num: integer;
+    signal count_num: unsigned(Nbits - 1 downto 0);
 begin
     simple_timer_inst : programmable_timer
         generic map (Nbits => Nbits)
@@ -63,7 +63,7 @@ begin
         end if;
     end process;
     -- bookkeeping
-    count_num <= to_integer(unsigned(count_internal));
+    count_num <= unsigned(count_internal);
     -- logic
     trigger_internal <= '1' when (count_num = 0) and (last_count = max_value) else '0';
     -- output
