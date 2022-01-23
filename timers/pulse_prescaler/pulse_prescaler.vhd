@@ -19,7 +19,7 @@ end;
 architecture behavioral of pulse_prescaler is
     signal count_reg : std_logic_vector(Nbits - 1 downto 0);
     signal next_count_reg : std_logic_vector(Nbits - 1 downto 0);
-    signal count_reg_num : integer;
+    signal count_reg_num : unsigned(Nbits - 1 downto 0);
 begin
     -- registers
     process(clock)
@@ -33,7 +33,7 @@ begin
         end if; -- rising edge clock
     end process;
     -- bookkeeping
-    count_reg_num <= to_integer(unsigned(count_reg));
+    count_reg_num <= unsigned(count_reg);
     -- next state
     process(count_reg,count_reg_num,sig_in,prescale)
     begin
@@ -41,7 +41,7 @@ begin
             if count_reg = prescale then
                 next_count_reg <= (others => '0');
             else
-                next_count_reg <= std_logic_vector(to_unsigned(count_reg_num + 1,Nbits));
+                next_count_reg <= std_logic_vector(count_reg_num + 1);
             end if;
         else
             next_count_reg <= count_reg;

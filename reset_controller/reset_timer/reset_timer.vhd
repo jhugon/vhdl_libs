@@ -18,8 +18,8 @@ architecture behavioral of reset_timer is
     signal reset_reg : std_logic := '1';
     signal count_next : std_logic_vector(Nbits - 1 downto 0);
     signal reset_next : std_logic;
-    signal count_num : integer;
-    signal count_to_reset_num : integer;
+    signal count_num : unsigned(Nbits-1 downto 0);
+    signal count_to_reset_num : unsigned(Nbits-1 downto 0);
 begin
     -- registers
     process(clock)
@@ -30,10 +30,10 @@ begin
         end if;
     end process;
     -- bookkeeping
-    count_num <= to_integer(unsigned(count_reg));
-    count_to_reset_num <= to_integer(unsigned(count_to_reset));
+    count_num <= unsigned(count_reg);
+    count_to_reset_num <= unsigned(count_to_reset);
     -- next state
-    count_next <= std_logic_vector(to_unsigned(to_integer(unsigned(count_reg))+1,Nbits));
+    count_next <= std_logic_vector(count_num+1);
     process(reset_reg,count_num,count_to_reset_num)
     begin
         if reset_reg = '0' then
