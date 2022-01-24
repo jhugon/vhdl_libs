@@ -3,9 +3,9 @@
 # defaults
 SIM = ghdl
 TOPLEVEL_LANG = vhdl
-SIM_ARGS+=-gCLK_FREQ=4000 -gTICK_FREQ=250
+SIM_ARGS+=-gCLK_FREQ=4000 -gDEBOUNCE_TICK_FREQ=250
 
-VHDL_SOURCES += $(PWD)/../../misc/*/*.vhd $(PWD)/../../timers/*/*.vhd $(PWD)/../../seven_seg_display/*/*.vhd $(PWD)/top.vhd
+VHDL_SOURCES += $(PWD)/../../misc/*/*.vhd $(PWD)/../../timers/*/*.vhd $(PWD)/../../switches/*/*.vhd $(PWD)/../../edges/*/*.vhd $(PWD)/../../seven_seg_display/*/*.vhd $(PWD)/top.vhd
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
 TOPLEVEL = top

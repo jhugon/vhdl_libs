@@ -9,10 +9,21 @@ import numpy as np
 
 def model(inputs,N):
 
-    seg = NumpySignal(np.zeros(N,dtype=np.uint32),[1]*N)
-    an = NumpySignal(np.zeros(N,dtype=np.uint32),[1]*N)
+    butC = inputs["butC"]
+    butU = inputs["butU"]
 
-    return {"seg":seg, "an":an}
+    count = np.zeros(N,dtype=np.uint32)
+    print(butC)
+
+    c = 0
+    for i in range(N):
+        print(butC[i],butC[i-1])
+        if int(butC[i-2]) == 0 and int(butC[i-1]) == 1:
+            print("butC pulse detected!")
+            c += 1
+        butC[i] = c
+
+    return {"count":count}
 
 @cocotb.test()
 async def fw_button_press_7seg_display_test(dut):
@@ -22,7 +33,12 @@ async def fw_button_press_7seg_display_test(dut):
     ## Test with a simple byte
     N = 100
     inputs = {
+        "butC": np.zeros(N,dtype=np.uint32),
+        "butU": np.zeros(N,dtype=np.uint32),
     }
+
+    inputs["butC"][10:30] = 1
+    inputs["butU"][30:40] = 1
 
     exp = model(inputs,N)
 

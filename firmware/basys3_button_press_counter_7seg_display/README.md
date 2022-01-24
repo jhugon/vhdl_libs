@@ -1,5 +1,7 @@
 # Basys3 Count button presses and display counter on 7-segment display
 
+Center button is debounced, up button is not.
+
 ## Making
 
 To run GHDL-based compilation checks and tests:
