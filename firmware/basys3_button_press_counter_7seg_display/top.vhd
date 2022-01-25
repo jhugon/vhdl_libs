@@ -77,7 +77,7 @@ architecture behavioral of top is
 
     constant display_bits : integer := integer(ceil(log2(real(10**N_DIGITS-1))));
     constant debounce_timer_max_int : integer := CLK_FREQ/DEBOUNCE_TICK_FREQ;
-    constant debounce_timer_max_nbits : integer := integer(ceil(log2(real(debounce_timer_max_int))));
+    constant debounce_timer_max_nbits : integer := integer(ceil(log2(real(debounce_timer_max_int+1))));
     constant debounce_timer_max : unsigned(debounce_timer_max_nbits-1 downto 0) := to_unsigned(debounce_timer_max_int,debounce_timer_max_nbits);
 
     signal btnC_sync : std_logic;

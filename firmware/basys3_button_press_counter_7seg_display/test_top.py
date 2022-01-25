@@ -9,36 +9,37 @@ import numpy as np
 
 def model(inputs,N):
 
-    butC = inputs["butC"]
-    butU = inputs["butU"]
+    btnC = inputs["btnC"]
+    btnU = inputs["btnU"]
 
     count = np.zeros(N,dtype=np.uint32)
-    print(butC)
 
     c = 0
     for i in range(N):
-        print(butC[i],butC[i-1])
-        if int(butC[i-2]) == 0 and int(butC[i-1]) == 1:
-            print("butC pulse detected!")
+        if int(btnC[i-9]) == 0 and int(btnC[i-8]) == 1:
             c += 1
-        butC[i] = c
+        if int(btnU[i-5]) == 0 and int(btnU[i-4]) == 1:
+            c += 1
+        count[i] = c
 
     return {"count":count}
 
 @cocotb.test()
-async def fw_button_press_7seg_display_test(dut):
+async def fw_btnton_press_7seg_display_test(dut):
     """
     Dummy test, b/c real hardware is the test of the display
     """
     ## Test with a simple byte
     N = 100
     inputs = {
-        "butC": np.zeros(N,dtype=np.uint32),
-        "butU": np.zeros(N,dtype=np.uint32),
+        "btnC": np.zeros(N,dtype=np.uint32),
+        "btnU": np.zeros(N,dtype=np.uint32),
     }
 
-    inputs["butC"][10:30] = 1
-    inputs["butU"][30:40] = 1
+    inputs["btnC"][10:15] = 1
+    inputs["btnU"][20:25] = 1
+    #inputs["btnC"][[30,32,34]] = 1
+    #inputs["btnU"][[36,38,40]] = 1
 
     exp = model(inputs,N)
 

@@ -3,7 +3,7 @@
 # defaults
 SIM = ghdl
 TOPLEVEL_LANG = vhdl
-SIM_ARGS+=-gCLK_FREQ=4000 -gDEBOUNCE_TICK_FREQ=250
+SIM_ARGS+=-gCLK_FREQ=4000 -gDEBOUNCE_TICK_FREQ=2000
 
 VHDL_SOURCES += $(PWD)/../../misc/*/*.vhd $(PWD)/../../timers/*/*.vhd $(PWD)/../../switches/*/*.vhd $(PWD)/../../edges/*/*.vhd $(PWD)/../../seven_seg_display/*/*.vhd $(PWD)/top.vhd
 
