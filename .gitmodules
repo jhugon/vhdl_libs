@@ -1,0 +1,3 @@
+[submodule "firmware/basys3_try_serv/serv"]
+	path = firmware/basys3_try_serv/serv
+	url = git@github.com:olofk/serv.git
