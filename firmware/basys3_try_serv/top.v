@@ -5,8 +5,8 @@ module top
  input wire  wb_rst,
  output wire q);
 
-   parameter memfile = "serv/sw/blinky.hex";
-   parameter memsize = 4166;
+   parameter memfile = "fastblinky.hex";
+   parameter memsize = 8192;
    parameter reset_strategy = "MINI";
    parameter sim = 0;
    parameter with_csr = 1;
