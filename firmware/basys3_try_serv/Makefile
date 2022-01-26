@@ -1,20 +1,17 @@
 # Makefile
 
 # defaults
-SIM = ghdl
-TOPLEVEL_LANG = vhdl
+#SIM = ghdl
+TOPLEVEL_LANG = verilog
 #SIM_ARGS+=-gCLK_FREQ=4000
 
-VHDL_SOURCES += $(PWD)/../../misc/*/*.vhd $(PWD)/../../timers/*/*.vhd $(PWD)/../../switches/*/*.vhd $(PWD)/../../edges/*/*.vhd $(PWD)/top.vhd
+VERILOG_SOURCES += $(PWD)/serv/rtl/*.v $(PWD)/serv/servant/*.v $(PWD)/top.v
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
 TOPLEVEL = top
 
 # MODULE is the basename of the Python test file
 MODULE = test_top
-
-# Outputs waveform
-SIM_ARGS+=--vcd=waveform_try_serv.vcd
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
