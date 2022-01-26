@@ -9,37 +9,24 @@ import numpy as np
 
 def model(inputs,N):
 
-    btnC = inputs["btnC"]
-    btnU = inputs["btnU"]
+    led = np.zeros(N,dtype=np.uint32)
+    RsTx = np.ones(N,dtype=np.uint32)
 
-    count = np.zeros(N,dtype=np.uint32)
-
-    c = 0
-    for i in range(N):
-        if int(btnC[i-9]) == 0 and int(btnC[i-8]) == 1:
-            c += 1
-        if int(btnU[i-5]) == 0 and int(btnU[i-4]) == 1:
-            c += 1
-        count[i] = c
-
-    return {"count":count}
+    return {"led":led,"RsTx":RsTx}
 
 @cocotb.test()
-async def fw_btnton_press_7seg_display_test(dut):
+async def fw_neorv32_test(dut):
     """
     Dummy test, b/c real hardware is the test of the display
     """
     ## Test with a simple byte
-    N = 100
+    N = 100000
     inputs = {
-        "btnC": np.zeros(N,dtype=np.uint32),
-        "btnU": np.zeros(N,dtype=np.uint32),
+        "rstn_i": np.ones(N,dtype=np.uint32),
+        "RsRx": np.ones(N,dtype=np.uint32),
     }
 
-    inputs["btnC"][10:15] = 1
-    inputs["btnU"][20:25] = 1
-    #inputs["btnC"][[30,32,34]] = 1
-    #inputs["btnU"][[36,38,40]] = 1
+    inputs["rstn_i"][:100] = 0
 
     exp = model(inputs,N)
 

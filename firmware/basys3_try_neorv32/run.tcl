@@ -9,9 +9,9 @@
 # config the FPGA part
 set part xc7a35tcpg236-1
 # config the top level VHDL name:
-set top top
+set top neorv32_test_setup_bootloader
 # config the firmware filename
-set bitfilename basys3_button_press_counter_7seg_display.bit
+set bitfilename basys3_neorv32.bit
 ###########################
 # Other configuration
 ###########################
@@ -27,12 +27,9 @@ file mkdir $outputDir
 #
 #read_vhdl -library bftLib [ glob ./Sources/hdl/bftLib/*.vhdl ]         
 #read_verilog  [ glob ./Sources/hdl/*.v ]
-read_vhdl [ glob ../../misc/*/*.vhd ]
-read_vhdl [ glob ../../timers/*/*.vhd ]
-read_vhdl [ glob ../../switches/*/*.vhd ]
-read_vhdl [ glob ../../edges/*/*.vhd ]
-read_vhdl [ glob ../../seven_seg_display/*/*.vhd ]
-read_vhdl ./top.vhd
+read_vhdl -library neorv32 [ glob ./neorv32/rtl/core/*.vhd ]
+read_vhdl -library neorv32 [ glob ./neorv32/rtl/core/mem/*.vhd ]
+read_vhdl ./neorv32_test_setup_bootloader.vhd
 read_xdc ./io_constraints.xdc
 #
 # STEP#2: run synthesis, report utilization and timing estimates, write checkpoint design
