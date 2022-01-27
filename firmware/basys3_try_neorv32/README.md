@@ -1,6 +1,6 @@
-# Basys3 Count button presses and display counter on 7-segment display
+# Basys3 Test out NeoRV32
 
-Center button is debounced, up button is not.
+Should blink LED 0, use switch 0 to reset (reset low)
 
 ## Making
 
@@ -12,7 +12,7 @@ To compile to a bitstream with Vivado:
 
     make vivado
 
-The bitstream is at `vivado_output/basys3_button_press_counter_7seg_display.bit`.
+The bitstream is at `vivado_output/basys3_neorv32.bit`.
 Intermediate reports are in that directory with a `.rpt` suffix. You can
 inspect intermediate states in Vivado by running `vivado vivado_output/<x>.dcp`
 
