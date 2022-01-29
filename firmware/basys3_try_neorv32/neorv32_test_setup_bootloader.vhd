@@ -53,7 +53,9 @@ begin
     IO_GPIO_EN                   => true,              -- implement general purpose input/output port unit (GPIO)?
     IO_MTIME_EN                  => true,              -- implement machine system timer (MTIME)?
     IO_UART0_EN                  => true,              -- implement primary universal asynchronous receiver/transmitter (UART0)?
-    IO_UART1_EN                  => true               -- implement primary universal asynchronous receiver/transmitter (UART1)?
+    IO_UART1_EN                  => true,              -- implement primary universal asynchronous receiver/transmitter (UART1)?
+    IO_UART1_RX_FIFO             => 8,                 -- add some extra to the fifo so that we don't need interrupts
+    IO_UART1_TX_FIFO             => 8                  -- add some extra to the fifo so that we don't need interrupts
   )
   port map (
     -- Global control --
