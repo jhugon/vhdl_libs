@@ -22,3 +22,14 @@ The following commands may be helpful to inspect the log:
 
     sed /^INFO/d vivado.log | less
     grep encountered vivado.log
+
+## UART1 Hookup
+
+UART1 is hooked up to two pins in Pmode "JA" (the upper left one).
+
+- Tx is pin JA1 (bottom upper pin)
+- Rx is pin JA2 (the one next to it on the upper row)
+
+They both use 3V3 I/O.
+
+See [Basys3 reference manual](https://digilent.com/reference/programmable-logic/basys-3/reference-manual#pmod_ports) for details.

@@ -1,37 +1,3 @@
--- #################################################################################################
--- # << NEORV32 - Test Setup using the UART-Bootloader to upload and run executables >>            #
--- # ********************************************************************************************* #
--- # BSD 3-Clause License                                                                          #
--- #                                                                                               #
--- # Copyright (c) 2021, Stephan Nolting. All rights reserved.                                     #
--- #                                                                                               #
--- # Redistribution and use in source and binary forms, with or without modification, are          #
--- # permitted provided that the following conditions are met:                                     #
--- #                                                                                               #
--- # 1. Redistributions of source code must retain the above copyright notice, this list of        #
--- #    conditions and the following disclaimer.                                                   #
--- #                                                                                               #
--- # 2. Redistributions in binary form must reproduce the above copyright notice, this list of     #
--- #    conditions and the following disclaimer in the documentation and/or other materials        #
--- #    provided with the distribution.                                                            #
--- #                                                                                               #
--- # 3. Neither the name of the copyright holder nor the names of its contributors may be used to  #
--- #    endorse or promote products derived from this software without specific prior written      #
--- #    permission.                                                                                #
--- #                                                                                               #
--- # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS   #
--- # OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF               #
--- # MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE    #
--- # COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,     #
--- # EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE #
--- # GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED    #
--- # AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING     #
--- # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED  #
--- # OF THE POSSIBILITY OF SUCH DAMAGE.                                                            #
--- # ********************************************************************************************* #
--- # The NEORV32 RISC-V Processor - https://github.com/stnolting/neorv32                           #
--- #################################################################################################
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -54,7 +20,10 @@ entity neorv32_test_setup_bootloader is
     led      : out std_ulogic_vector(7 downto 0); -- parallel output
     -- UART0 --
     RsTx : out std_ulogic; -- UART0 send data
-    RsRx : in  std_ulogic  -- UART0 receive data
+    RsRx : in  std_ulogic; -- UART0 receive data
+    -- UART1 --
+    UART1_tx : out std_ulogic;
+    UART1_rx : in  std_ulogic
   );
 end entity;
 
@@ -64,8 +33,6 @@ architecture neorv32_test_setup_bootloader_rtl of neorv32_test_setup_bootloader 
 
 begin
 
-  -- The Core Of The Problem ----------------------------------------------------------------
-  -- -------------------------------------------------------------------------------------------
   neorv32_top_inst: neorv32_top
   generic map (
     -- General --
@@ -85,7 +52,8 @@ begin
     -- Processor peripherals --
     IO_GPIO_EN                   => true,              -- implement general purpose input/output port unit (GPIO)?
     IO_MTIME_EN                  => true,              -- implement machine system timer (MTIME)?
-    IO_UART0_EN                  => true               -- implement primary universal asynchronous receiver/transmitter (UART0)?
+    IO_UART0_EN                  => true,              -- implement primary universal asynchronous receiver/transmitter (UART0)?
+    IO_UART1_EN                  => true               -- implement primary universal asynchronous receiver/transmitter (UART1)?
   )
   port map (
     -- Global control --
@@ -95,11 +63,12 @@ begin
     gpio_o      => con_gpio_o,  -- parallel output
     -- primary UART0 (available if IO_UART0_EN = true) --
     uart0_txd_o => RsTx, -- UART0 send data
-    uart0_rxd_i => RsRx  -- UART0 receive data
+    uart0_rxd_i => RsRx, -- UART0 receive data
+    uart1_txd_o => UART1_tx, -- UART1 send data
+    uart1_rxd_i => UART1_rx  -- UART1 receive data
   );
 
   -- GPIO output --
   led <= con_gpio_o(7 downto 0);
-
 
 end architecture;

@@ -20,7 +20,7 @@ async def fw_neorv32_test(dut):
     Dummy test, b/c real hardware is the test of the display
     """
     ## Test with a simple byte
-    N = 10000
+    N = 1000
     inputs = {
         "rstn_i": np.ones(N,dtype=np.uint32),
         "RsRx": np.ones(N,dtype=np.uint32),

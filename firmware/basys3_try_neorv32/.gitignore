@@ -1,2 +1,4 @@
 top
 vivado_output
+neorv32_test_setup_bootloader
+neorv32.*.out
