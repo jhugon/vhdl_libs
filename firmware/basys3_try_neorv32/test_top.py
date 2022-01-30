@@ -9,8 +9,8 @@ import numpy as np
 
 def model(inputs,N):
 
-    led = np.zeros(N,dtype=np.uint32)
-    RsTx = np.ones(N,dtype=np.uint32)
+    led = NumpySignal(np.zeros(N,dtype=np.uint32),[1]*N)
+    RsTx = NumpySignal(np.ones(N,dtype=np.uint32),[1]*N)
 
     return {"led":led,"RsTx":RsTx}
 
