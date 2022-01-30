@@ -1,0 +1,3 @@
+[submodule "firmware/basys3_try_neorv32/neorv32"]
+	path = firmware/basys3_try_neorv32/neorv32
+	url = git@github.com:stnolting/neorv32.git
