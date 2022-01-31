@@ -3,16 +3,32 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.math_real.all;
 
--- sel_i(0) is read only and the current count
--- sel_i(1) is the control/status register. Bit 0 is enable, bit 1 is reset.
--- counter and data bus are both 32 bits wide
+-- Pulse Counter Wishbone Core
+-- 
+-- Wishbone information:
+
+-- Wishbone B4 Classic Slave
+-- Signals are similar to the WB B spec with a "wb_" prefix.
+-- Wishbone port size and granularity are 32 bits
+-- Operand size 32 bit (N/A)
+-- Big endian/little endian
+-- Data transfer ordering: undefined
+-- No constraints on clk_i
+--
+-- Register information:
+--
+-- There are 2 registers:
+--
+-- wb_adr_i = 0 is read only and the current count (32 bits wide)
+-- wb_adr_i = 1 is the control/status register. Bit 0 is enable, bit 1 is reset.
+--
 entity pulse_counter_wb is
     port(
         sig_in : in std_logic;
         wb_clk_i : in std_logic;
         wb_rst_i : in std_logic;
         wb_cyc_i : in std_logic;
-        wb_sel_i : in std_logic_vector(1 downto 0);
+        wb_adr_i : in std_logic; -- 1 bit address space
         wb_stb_i : in std_logic;
         wb_we_i : in std_logic;
         wb_dat_i : in std_logic_vector(31 downto 0);
@@ -62,24 +78,24 @@ begin
         end if;
     end process;
     -- next state
-    next_state_proc : process(wb_stb_i,wb_we_i,wb_sel_i,wb_dat_i,wb_rst_i,enable_reg,count,reset_reg)
+    next_state_proc : process(wb_stb_i,wb_we_i,wb_adr_i,wb_dat_i,wb_rst_i,enable_reg,count,reset_reg)
     begin
         if wb_stb_i = '1' then
             if wb_we_i = '1' then
                 wb_dat_o <= (others => '0');
-                if wb_sel_i(1) = '1' then
+                if wb_adr_i = '1' then -- CSR
                     enable_next <= wb_dat_i(0);
                     reset_next <= wb_dat_i(1);
-                else
+                else -- count register
                     enable_next <= enable_reg;
                     reset_next <= reset_reg;
                 end if;
             else
                 enable_next <= enable_reg;
                 reset_next <= reset_reg;
-                if wb_sel_i(1) = '1' then
+                if wb_adr_i = '1' then -- CSR
                     wb_dat_o <= (0 => enable_reg, 1 => reset_reg, others => '0');
-                else
+                else -- count register
                     wb_dat_o <= count;
                 end if;
             end if;
