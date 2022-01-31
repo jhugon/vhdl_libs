@@ -6,7 +6,7 @@ TOPLEVEL_LANG = vhdl
 #SIM_ARGS+=-gCLK_FREQ=4000 -gDEBOUNCE_TICK_FREQ=2000
 
 VHDL_SOURCES_neorv32 += $(PWD)/neorv32/rtl/core/mem/*.vhd $(PWD)/neorv32/rtl/core/*.vhd
-VHDL_SOURCES += $(PWD)/neorv32_test_setup_bootloader.vhd
+VHDL_SOURCES += $(PWD)/../../misc/*/*.vhd $(PWD)/../../timers/*/*.vhd $(PWD)/../../switches/*/*.vhd $(PWD)/../../edges/*/*.vhd $(PWD)/../../pulse_analysis/*/*.vhd $(PWD)/../../seven_seg_display/*/*.vhd $(PWD)/neorv32_test_setup_bootloader.vhd
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
 TOPLEVEL = neorv32_test_setup_bootloader
