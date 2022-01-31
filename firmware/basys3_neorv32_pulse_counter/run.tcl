@@ -27,6 +27,11 @@ file mkdir $outputDir
 #
 #read_vhdl -library bftLib [ glob ./Sources/hdl/bftLib/*.vhdl ]         
 #read_verilog  [ glob ./Sources/hdl/*.v ]
+read_vhdl [ glob ../../misc/*/*.vhd ]
+read_vhdl [ glob ../../timers/*/*.vhd ]
+read_vhdl [ glob ../../switches/*/*.vhd ]
+read_vhdl [ glob ../../edges/*/*.vhd ]
+read_vhdl [ glob ../../pulse_analysis/*/*.vhd ]
 read_vhdl -library neorv32 [ glob ./neorv32/rtl/core/*.vhd ]
 read_vhdl -library neorv32 [ glob ./neorv32/rtl/core/mem/*.vhd ]
 read_vhdl ./neorv32_test_setup_bootloader.vhd
