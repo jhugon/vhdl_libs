@@ -1,4 +1,5 @@
 top
 vivado_output
+vivado_output_rom
 neorv32_test_setup_bootloader
 neorv32.*.out
