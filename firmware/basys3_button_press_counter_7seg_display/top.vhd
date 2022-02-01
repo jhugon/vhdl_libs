@@ -41,6 +41,18 @@ architecture behavioral of top is
             sig_out : out std_logic
             );
     end component;
+    component switch_input is
+        port(
+            clock : in std_logic;
+            reset : in std_logic;
+            reset_value : in std_logic;
+            tick: in std_logic;
+            sig_in : in std_logic;
+            sig_out : out std_logic;
+            falling_edge_pulse : out std_logic;
+            rising_edge_pulse : out std_logic
+            );
+    end component;
     component programmable_timer_pulser is
         generic(Nbits: integer := 10); -- N bits to use for counter
         port(
@@ -93,28 +105,21 @@ architecture behavioral of top is
     signal digit_enables : std_logic_vector(N_DIGITS-1 downto 0);
 begin
     -- submodules
-    btnC_dbl_ff : double_flip_flop
-        port map (
+    btnC_sw_input : switch_input
+        port map(
             clock => clk,
             reset => '0',
+            reset_value => '0',
+            tick => debounce_tick,
             sig_in => btnC,
-            sig_out => btnC_sync
-        );
+            rising_edge_pulse => btnC_edge
+            );
     btnU_dbl_ff : double_flip_flop
         port map (
             clock => clk,
             reset => '0',
             sig_in => btnU,
             sig_out => btnU_sync
-        );
-    btnC_debounce : switch_debouncer
-        port map (
-            clock => clk,
-            reset => '0',
-            reset_value => '0',
-            tick => debounce_tick,
-            sig_in => btnC_sync,
-            sig_out => btnC_debounced
         );
     debounce_timer_pulser : programmable_timer_pulser
         generic map (Nbits => debounce_timer_max_nbits)
@@ -125,13 +130,6 @@ begin
             max_value => std_logic_vector(debounce_timer_max),
             trigger_only_wraparound => '0',
             trigger => debounce_tick
-        );
-    btnC_edge_det : edge_detector_rising
-        port map (
-            clock => clk,
-            reset => '0',
-            sig_in => btnC_debounced,
-            sig_out => btnC_edge
         );
     btnU_edge_det : edge_detector_rising
         port map (

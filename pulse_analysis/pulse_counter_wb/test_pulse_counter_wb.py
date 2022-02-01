@@ -11,7 +11,7 @@ import numpy as np
 def model(inputs):
     sig_in = inputs["sig_in"]
     rst_i = inputs["wb_rst_i"]
-    sel_i = inputs["wb_sel_i"]
+    adr_i = inputs["wb_adr_i"]
     stb_i = inputs["wb_stb_i"]
     we_i = inputs["wb_we_i"]
     dat_i = inputs["wb_dat_i"]
@@ -33,16 +33,16 @@ def model(inputs):
             enable_reg[i] = 0
             count[i] = 0
         if stb_i[i-1]:
-            if not (sel_i[i-1] == 1 or sel_i[i-1] == 2):
-                raise Exception(f"Invalid dut input sel_i for i={i-1}")
-            if we_i[i-1] and sel_i[i-1] == 2: # write
+            if not (adr_i[i-1] == 0 or adr_i[i-1] == 1):
+                raise Exception(f"Invalid dut input adr_i for i={i-1}")
+            if we_i[i-1] and adr_i[i-1] == 1: # write CSR
                 reset_reg[i] = (int(dat_i[i-1]) >> 1) & 1
                 enable_reg[i] = int(dat_i[i-1]) & 1
             else:
                 reset_reg[i] = reset_reg[i-1]
                 enable_reg[i] = enable_reg[i-1]
             if not we_i[i-1]: # read
-                if sel_i[i-1] == 2: # ctrl/status
+                if adr_i[i-1] == 1: # ctrl/status
                     dat_o[i] = 2*reset_reg[i-1]+enable_reg[i-1]
         else:
             reset_reg[i] = reset_reg[i-1]
@@ -61,7 +61,7 @@ def model(inputs):
         #####################
         # wb model--come back and do count datat output after count is setup
         #####################
-        if stb_i[i-1] and not we_i[i-1] and sel_i[i-1] == 1:
+        if stb_i[i-1] and not we_i[i-1] and adr_i[i-1] == 0:
             print(f"It's a count: {count[i-1]}")
             dat_o[i] = count[i]
 
@@ -84,7 +84,7 @@ async def pulse_counter_test(dut):
         "sig_in": np.zeros(N),
         "wb_rst_i": np.zeros(N),
         "wb_cyc_i": np.zeros(N),
-        "wb_sel_i": np.zeros(N),
+        "wb_adr_i": np.zeros(N),
         "wb_stb_i": np.zeros(N),
         "wb_we_i": np.zeros(N),
         "wb_dat_i": np.zeros(N),
@@ -95,13 +95,13 @@ async def pulse_counter_test(dut):
     # write 1 to enable and 0 to reset in ctrl/status reg
     inputs["wb_cyc_i"][10] = 1
     inputs["wb_stb_i"][10] = 1
-    inputs["wb_sel_i"][10] = 2
+    inputs["wb_adr_i"][10] = 1
     inputs["wb_we_i"][10] = 1
     inputs["wb_dat_i"][10] = 1
     # read count a few times
     inputs["wb_cyc_i"][[5,13,25,35]] = 1
     inputs["wb_stb_i"][[5,13,25,35]] = 1
-    inputs["wb_sel_i"][[5,13,25,35]] = 1
+    inputs["wb_adr_i"][[5,13,25,35]] = 0
     inputs["wb_we_i"][[5,13,25,35]] = 0
 
     exp = model(inputs)
