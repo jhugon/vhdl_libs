@@ -158,7 +158,7 @@ begin
         wb_clk_i => clk,
         wb_rst_i => '0',
         wb_cyc_i => pc_wb_cyc,
-        wb_adr_i => wb_adr_o(0),
+        wb_adr_i => wb_adr_o(2),
         wb_stb_i => pc_wb_stb,
         wb_we_i => wb_we_o,
         wb_dat_i => wb_dat_o_sl,
@@ -189,7 +189,7 @@ begin
   -- Wishbone multiplexer
   wb_mux : process(wb_adr_o,wb_cyc_o,pc_wb_ack,wb_stb_o)
   begin
-    if unsigned(wb_adr_o(31 downto 1)) = pulse_counter_address_base(31 downto 1) then
+    if unsigned(wb_adr_o(31 downto 3)) = pulse_counter_address_base(31 downto 3) then
         pc_wb_cyc <= wb_cyc_o;
         wb_ack_i <= pc_wb_ack;
         pc_wb_stb <= wb_stb_o;
