@@ -14,6 +14,8 @@ use ieee.math_real.all;
 -- Big endian/little endian
 -- Data transfer ordering: undefined
 -- No constraints on clk_i
+-- 
+-- Since granularity is 32 bits, wb_addr_i should be bit 2 (indexing from 0) of the address.
 --
 -- Register information:
 --
