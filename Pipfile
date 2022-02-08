@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-cocotb = {version = "~=1.6.1", extras = ["bus"]}
+cocotb = {version = "~=1.6.2", extras = ["bus"]}
 pytest = "~=6.2.5"
 cocotb-numpy = {editable = true, ref = "main", git = "https://github.com/jhugon/cocotb-numpy.git"}
 
